@@ -1,0 +1,168 @@
+.navbar {
+    transition: all 0.3s ease;
+    width: 100%;
+    color: white;
+}
+
+.navbar.collapsed {
+    width: 20px;
+}
+
+.navbar-brand {
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    color: white;
+}
+
+.toggle-btn {
+    position: absolute;
+    right: -15px;
+    top: 20px;
+    background: #fff;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border: none;
+    padding: 0;
+    z-index: 1000;
+    /* Añadimos un z-index alto para asegurar que esté por encima */
+}
+
+/* También podemos mejorar la sombra para darle más presencia */
+.toggle-btn:hover {
+    background: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
+}
+
+
+/* Efecto hover para enlaces en la navbar */
+.nav-link {
+    position: relative;
+    transition: all 0.3s ease;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.079);
+    padding: 10px 15px;
+    font-size: 1.2rem;
+    display: flex;
+    /* Añadir display flex */
+    align-items: center;
+    /* Alinear elementos verticalmente al centro */
+}
+
+/* Efecto cuando se pasa el cursor sobre el enlace */
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.113);
+    transform: translateX(5px);
+}
+
+/* Efecto para los iconos dentro del enlace */
+.nav-link i {
+    transition: all 0.3s ease;
+    margin-right: 12px;
+    width: 20px;
+    text-align: center;
+    display: inline-flex;
+    /* Ayuda con la alineación */
+    align-items: center;
+    /* Centra el icono verticalmente */
+    justify-content: center;
+    /* Centra el icono horizontalmente */
+}
+
+/* Efecto para los iconos cuando se hace hover */
+.nav-link:hover i {
+    color: #0d6efd;
+    transform: scale(1.2);
+}
+
+/* Efecto para el texto cuando se hace hover */
+.nav-link:hover span {
+    font-weight: 500;
+    color: #0d6efd;
+}
+
+/* Modifica la regla existente para los iconos */
+.nav-link i {
+    transition: all 0.3s ease;
+    margin-right: 12px; /* Espacio entre el icono y el texto */
+    width: 20px; /* Ancho fijo para alinear todos los textos */
+    text-align: center; /* Centra los iconos en su espacio */
+}
+
+/* Ajuste para cuando la barra está colapsada */
+.navbar.collapsed .nav-link i {
+    margin-right: 0; /* Elimina el margen cuando está colapsado */
+}
+
+/* Efectos específicos para la navbar colapsada */
+.navbar.collapsed .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+    transform: translateX(3px);
+    border-radius: 50%;
+}
+
+.navbar.collapsed .nav-link:hover i {
+    transform: scale(1.3);
+    color: #0d6efd;
+}
+
+/* Indicador visual en el lado izquierdo al hacer hover */
+.nav-link::before {
+    content: "";
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 60%;
+    background-color: #0d6efd;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::before {
+    width: 3px;
+}
+
+/* Añadir al final del archivo */
+
+/* Estilo para el texto en la navbar */
+.nav-text {
+    transition: all 0.3s ease;
+    opacity: 1;
+    width: auto;
+    overflow: hidden;
+    white-space: nowrap;
+    display: inline-flex;
+    /* Igual que los iconos */
+    align-items: center;
+    /* Centra el texto verticalmente */
+}
+
+/* Estilo para el texto cuando la navbar está colapsada */
+.collapsed-text {
+    opacity: 0;
+    width: 0;
+    margin-left: 0 !important;
+    transform: translateX(-10px);
+}
+
+/* Mejora la transición del icono */
+.navbar.collapsed .nav-link i {
+    margin-right: 0;
+    transition: all 0.3s ease;
+}
+
+/* Ajuste para que el icono se centre cuando la navbar está colapsada */
+.navbar.collapsed .nav-link {
+    justify-content: center;
+    display: flex;
+    padding: 0.5rem;
+}

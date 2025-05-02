@@ -1,1 +1,35 @@
-<p>navbar works!</p>
+<!-- navbar.component.html -->
+<nav class="navbar flex-column p-3" [class.collapsed]="isCollapsed">
+    
+    <div class="navbar-header d-flex align-items-center mb-4">
+        <a class="navbar-brand" [class.collapsed-text]="isCollapsed">
+            <i class="fa-solid fa-box-open me-2"></i>
+            <span [class.d-none]="isCollapsed" class="rowdies-bold">Stock-App</span>
+        </a>
+        <button class="btn btn-light toggle-btn" (click)="toggleNavbar()">
+            <i class="fas" [class.fa-chevron-left]="!isCollapsed" [class.fa-chevron-right]="isCollapsed"></i>
+        </button>
+    </div>
+
+    <div class="nav-links">
+        <a class="nav-link mb-2" [routerLink]="['/home']" [routerLinkActive]="['active']">
+            <i class="fas fa-home"></i> <span class="nav-text" [class.collapsed-text]="isCollapsed">Inicio</span>
+        </a>
+        <a class="nav-link mb-2" [routerLink]="['/historial']" [routerLinkActive]="['active']">
+            <i class="fas fa-history"></i> <span class="nav-text" [class.collapsed-text]="isCollapsed">Historial</span>
+        </a>
+        <a class="nav-link mb-2" [routerLink]="['/inventario']" [routerLinkActive]="['active']">
+            <i class="fas fa-boxes"></i> <span class="nav-text" [class.collapsed-text]="isCollapsed">Inventario</span>
+        </a>
+        <a class="nav-link mb-2" [routerLink]="['/escaner']" [routerLinkActive]="['active']">
+            <i class="fa-solid fa-expand"></i> <span class="nav-text" [class.collapsed-text]="isCollapsed">Escaner</span>
+        </a>
+        <a class="nav-link mb-2" [routerLink]="['/codigos']" [routerLinkActive]="['active']">
+            <i class="fas fa-barcode"></i> <span class="nav-text" [class.collapsed-text]="isCollapsed">Códigos</span>
+        </a>
+        <a class="nav-link mb-2" [routerLink]="['/perfil']" [routerLinkActive]="['active']">
+            <i class="fas fa-user"></i> <span class="nav-text" [class.collapsed-text]="isCollapsed">Perfil</span>
+        </a>
+    </div>
+    
+</nav>

@@ -1,0 +1,11 @@
+<div class="layout-container">
+    <aside class="sidebar" [class.collapsed]="isNavbarCollapsed">
+        <app-navbar></app-navbar>
+    </aside>
+
+    <main class="main-content" [class.collapsed]="isNavbarCollapsed">
+        <div class="component-container">
+            <router-outlet></router-outlet>
+        </div>
+    </main>
+</div>

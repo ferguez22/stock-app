@@ -1,11 +1,11 @@
-.inventario-container {
+.perfil-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     height: 100%;
     padding: 20px;
     overflow-y: auto;
-    background-color: rgb(117, 167, 184);
+    background-color: rgb(86, 86, 86);
     border-radius: 8px;
     box-sizing: border-box;
 }
