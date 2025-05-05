@@ -1,11 +1,205 @@
 .home-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
     height: 100%;
     padding: 20px;
     overflow-y: auto;
-    background-color: rgb(120, 214, 120);
+    background-color: #f5f5f5;
     border-radius: 8px;
     box-sizing: border-box;
+}
+
+.header {
+    text-align: center;
+}
+
+.header h2 {
+    font-family: 'Rowdies', sans-serif;
+    color: #333;
+}
+
+/* Grid de dashboard */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 20px;
+    height: calc(100% - 60px);
+}
+
+/* Tarjetas */
+.dashboard-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* Tarjeta de bienvenida */
+.welcome-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.user-greeting {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.avatar-circle {
+    color: #6c757d;
+    margin-right: 15px;
+    background-color: rgba(255, 255, 255, 0.6);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.greeting-text h4 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.greeting-text p {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+/* Tarjeta de estadísticas */
+.stats-card {
+    background: linear-gradient(135deg, #2980b9 0%, #6dd5fa 100%);
+    color: white;
+}
+
+.stats-card .card-title {
+    color: white;
+    border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+.stats-content {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.stat-item {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-info h4 {
+    font-size: 2.2rem;
+    margin: 10px 0 0;
+}
+
+.stat-info p {
+    font-size: 0.9rem;
+    margin: 0;
+    opacity: 0.8;
+}
+
+/* Tarjeta de productos */
+.products-card {
+    background-color: white;
+}
+
+.recent-products {
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+.product-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.product-item:last-child {
+    border-bottom: none;
+}
+
+.product-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-name {
+    font-weight: 500;
+}
+
+.product-type {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+/* Tarjeta de acciones */
+.actions-card {
+    background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+    color: white;
+}
+
+.actions-card .card-title {
+    color: white;
+    border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+.quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.btn-action {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    padding: 15px;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: calc(33% - 10px);
+}
+
+.btn-action:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-3px);
+}
+
+.btn-action i {
+    margin-bottom: 8px;
+}
+
+.btn-action span {
+    font-size: 0.85rem;
+}
+
+/* Responsividad */
+@media (max-width: 992px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto;
+    }
 }

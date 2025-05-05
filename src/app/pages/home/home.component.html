@@ -1,3 +1,137 @@
 <div class="home-container">
-<p>home works!</p>
+    <!-- Header general -->
+    <div class="header mb-3">
+        <h2>Panel de Control</h2>
+    </div>
+
+    <!-- Grid principal de 2x2 -->
+    <div class="dashboard-grid">
+
+        <!-- Superior izquierdo: Saludo al usuario -->
+        <div class="dashboard-card welcome-card">
+            <h3 class="card-title">Bienvenido</h3>
+
+            @if (currentUser) {
+            <div class="user-greeting">
+                <div class="avatar-circle">
+                    <i class="fas fa-user-circle fa-3x"></i>
+                </div>
+                <div class="greeting-text">
+                    <h4>¡Hola, {{ currentUser.name }}!</h4>
+                    <p class="badge" [ngClass]="{
+              'bg-danger': currentUser.role === 'admin',
+              'bg-primary': currentUser.role === 'user'
+            }">
+                        {{ currentUser.role }}
+                    </p>
+                    <p class="mt-2">{{ getGreetingByTime() }}</p>
+                </div>
+            </div>
+            } @else if (!userError) {
+            <div class="loading-user">
+                <div class="spinner-border spinner-border-sm text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <span class="ms-2">Cargando datos de usuario...</span>
+            </div>
+            } @else {
+            <div class="text-danger">
+                <i class="fas fa-exclamation-circle"></i>
+                <span class="ms-2">Error al cargar datos del usuario</span>
+            </div>
+            }
+        </div>
+
+        <!-- Superior derecho: Estadísticas -->
+        <div class="dashboard-card stats-card">
+            <h3 class="card-title">Estadísticas</h3>
+            <div class="stats-content">
+                <div class="stat-item">
+                    <i class="fas fa-boxes fa-2x"></i>
+                    <div class="stat-info">
+                        <h4>{{ totalProducts || '0' }}</h4>
+                        <p>Productos</p>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                    <div class="stat-info">
+                        <h4>{{ lowStockCount || '0' }}</h4>
+                        <p>Bajo stock</p>
+                    </div>
+                </div>
+            </div>
+            <a [routerLink]="['/inventario']" class="btn btn-sm btn-outline-primary mt-3">
+                <i class="fas fa-arrow-right me-1"></i> Ver inventario
+            </a>
+        </div>
+
+        <!-- Inferior izquierdo: Productos recientes -->
+        <div class="dashboard-card products-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="card-title mb-0">Productos Recientes</h3>
+                <a [routerLink]="['/inventario']" class="btn btn-sm btn-link">
+                    Ver todos
+                </a>
+            </div>
+
+            @if (isLoading) {
+            <div class="text-center my-3">
+                <div class="spinner-border spinner-border-sm text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p class="mt-1 small">Cargando productos...</p>
+            </div>
+            } @else if (error) {
+            <div class="alert alert-danger py-2">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Error al cargar productos
+            </div>
+            } @else {
+            <div class="recent-products">
+                @if (recentProducts.length > 0) {
+                @for (product of recentProducts; track $index) {
+                <div class="product-item">
+                    <div class="product-info">
+                        <span class="product-name">{{ product.item }}</span>
+                        <span class="product-type">{{ product.type }}</span>
+                    </div>
+                    <span class="badge" [ngClass]="{
+                  'bg-danger': product.stock <= 2,
+                  'bg-warning': product.stock > 2 && product.stock <= 5,
+                  'bg-success': product.stock > 5
+                }">
+                        {{ product.stock }}
+                    </span>
+                </div>
+                }
+                } @else {
+                <div class="text-center text-muted my-3">
+                    <i class="fas fa-box-open me-2"></i>
+                    No hay productos registrados
+                </div>
+                }
+            </div>
+            }
+        </div>
+
+        <!-- Inferior derecho: Acciones rápidas -->
+        <div class="dashboard-card actions-card">
+            <h3 class="card-title">Acciones Rápidas</h3>
+            <div class="quick-actions">
+                <button class="btn btn-action">
+                    <i class="fas fa-plus-circle fa-2x"></i>
+                    <span>Nuevo Producto</span>
+                </button>
+                <button class="btn btn-action">
+                    <i class="fas fa-barcode fa-2x"></i>
+                    <span>Escanear</span>
+                </button>
+                <button class="btn btn-action">
+                    <i class="fas fa-file-export fa-2x"></i>
+                    <span>Exportar</span>
+                </button>
+            </div>
+        </div>
+    </div>
 </div>

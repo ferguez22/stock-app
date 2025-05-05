@@ -1,1 +1,44 @@
-<p>product-card works!</p>
+<div class="product-card">
+    <div class="product-type">
+        {{ product.type }}
+    </div>
+
+    <div class="product-icon">
+        <i class="fa-solid" [ngClass]="{
+      'fa-display': product.type.toLowerCase().includes('monitor'),
+      'fa-headphones': product.type.toLowerCase().includes('audio'),
+      'fa-keyboard': product.type.toLowerCase().includes('teclado'),
+      'fa-mouse': product.type.toLowerCase().includes('ratón') || product.type.toLowerCase().includes('raton'),
+      'fa-cable': product.type.toLowerCase().includes('cable'),
+      'fa-volume-high': product.type.toLowerCase().includes('alta') || product.type.toLowerCase().includes('sonido'),
+      'fa-microchip': product.type.toLowerCase().includes('memoria') || product.type.toLowerCase().includes('ram'),
+      'fa-sd-card': product.type.toLowerCase().includes('micro sd') || product.type.toLowerCase().includes('sd'),
+      'fa-box': true
+    }"></i>
+    </div>
+
+    <h3 class="product-name">{{ product.item }}</h3>
+
+    <div class="product-code">
+        <span class="code-label">REF:</span>
+        <span class="code-value">{{ product.code || 'N/A' }}</span>
+    </div>
+
+    <div class="product-stock">
+        <span class="stock-label">Stock:</span>
+        <span class="stock-value badge" [ngClass]="getStockStatusClass()">{{ product.stock }}</span>
+    </div>
+
+    <div class="product-date" *ngIf="product.updatedAt">
+        <small>Actualizado: {{ product.updatedAt | date:'dd/MM/yyyy' }}</small>
+    </div>
+
+    <div class="product-actions">
+        <button class="btn btn-sm btn-outline-primary action-btn" (click)="onView()">
+            <i class="fas fa-eye"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-secondary action-btn" (click)="onEdit()">
+            <i class="fas fa-edit"></i>
+        </button>
+    </div>
+</div>

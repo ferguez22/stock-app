@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 import { IProduct } from '../interfaces/iproduct.interface';
+import { IApiResponse } from '../interfaces/iresponse.interface';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,18 @@ export class ProductService {
   constructor(private http: HttpClient) {}
   
   getAll(): Observable<IProduct[]> {
-    return this.http.get<IProduct[]>(this.apiUrl);
+    return this.http.get<IApiResponse<IProduct[]>>(this.apiUrl).pipe(
+      map(response => {
+        if (!response.success || !response.data) {
+          throw new Error(response.message || 'Error al obtener productos');
+        }
+        return response.data;
+      }),
+      catchError(error => {
+        console.error('Error en ProductService.getAll:', error);
+        return throwError(() => error);
+      })
+    );
   }
   
   getById(id: string): Observable<IProduct> {
