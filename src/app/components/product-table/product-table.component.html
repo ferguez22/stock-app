@@ -10,8 +10,9 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let product of products">
-                <td><span class="badge bg-secondary">{{ product.code || 'N/A' }}</span></td>
+            @for (product of products; track product) {
+            <tr>
+                <td><span class="badge bg-secondary">{{ product.code || 'N/A' }}</span>
                 <td>{{ product.type }}</td>
                 <td>{{ product.item }}</td>
                 <td class="text-center">
@@ -22,13 +23,14 @@
                                 'bg-warning': product.stock > 2 && product.stock <= 5,
                                 'bg-success': product.stock > 5
                             }">{{ product.stock }}</span>
-                            <small class="d-block mt-1">En almacén</small>
                         </div>
 
-                        <div class="stock-out" *ngIf="product.outStock && product.outStock > 0">
+                        @if (product.outStock && product.outStock > 0) {
+                        <div class="stock-out">
                             <span class="badge bg-secondary">{{ product.outStock }}</span>
                             <small class="d-block mt-1">Fuera</small>
                         </div>
+                        }
                     </div>
                 </td>
                 <td>
@@ -38,18 +40,19 @@
                             <i class="fas fa-eye"></i>
                         </button>
 
+                        @if (isAdmin()) {
                         <!-- Botones de Editar y Eliminar (solo para admin) -->
-                        <ng-container *ngIf="isAdmin()">
-                            <button class="btn btn-sm btn-outline-primary" (click)="onEdit(product)">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" (click)="onDelete(product)">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </ng-container>
+                        <button class="btn btn-sm btn-outline-primary" (click)="onEdit(product)">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" (click)="onDelete(product)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        }
                     </div>
                 </td>
             </tr>
+            }
         </tbody>
     </table>
 </div>
