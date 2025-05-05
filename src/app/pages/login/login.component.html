@@ -1,1 +1,56 @@
-<p>login works!</p>
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <i class="fa-solid fa-box-open fa-3x"></i>
+            <h2 class="rowdies-bold">Stock App</h2>
+            <p class="login-subtitle rowdies-light">Gestión de inventario</p>
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+            <!-- Mensaje de error -->
+            <div *ngIf="errorMessage" class="alert alert-danger">
+                {{ errorMessage }}
+            </div>
+
+            <!-- Campo Email -->
+            <div class="form-group mb-3">
+                <label for="email" class="form-label">Email</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                    <input type="email" id="email" formControlName="email" class="form-control"
+                        [ngClass]="{'is-invalid': loginForm.get('email')?.invalid && loginForm.get('email')?.touched}"
+                        placeholder="correo@ejemplo.com">
+                </div>
+                <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+                    class="text-danger mt-1">
+                    <small *ngIf="loginForm.get('email')?.errors?.['required']">El email es obligatorio</small>
+                    <small *ngIf="loginForm.get('email')?.errors?.['email']">Ingresa un email válido</small>
+                </div>
+            </div>
+
+            <!-- Campo Password -->
+            <div class="form-group mb-4">
+                <label for="password" class="form-label">Contraseña</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input type="password" id="password" formControlName="password" class="form-control"
+                        [ngClass]="{'is-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}"
+                        placeholder="********">
+                </div>
+                <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+                    class="text-danger mt-1">
+                    <small *ngIf="loginForm.get('password')?.errors?.['required']">La contraseña es obligatoria</small>
+                    <small *ngIf="loginForm.get('password')?.errors?.['minlength']">La contraseña debe tener al menos 6
+                        caracteres</small>
+                </div>
+            </div>
+
+            <!-- Botón de inicio de sesión -->
+            <button type="submit" class="btn btn-primary w-100" [disabled]="isLoading">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"
+                    aria-hidden="true"></span>
+                <span>Iniciar sesión</span>
+            </button>
+        </form>
+    </div>
+</div>

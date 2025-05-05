@@ -8,10 +8,12 @@ import { Error404Component } from './pages/error404/error404.component';
 import { CodigosComponent } from './pages/codigos/codigos.component';
 import { EscanerComponent } from './pages/escaner/escaner.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: '', component: MainLayoutComponent,
+    canActivate: [authGuard],
     children: [
       { path: 'home', component: HomeComponent },
       { path: 'historial', component: HistorialTransaccionesComponent },

@@ -1,4 +1,18 @@
-<p>error404 works!</p>
-
-<a class="btn btn-danger" [routerLink]="['/home']" [routerLinkActive]="['selected']">Regresar a inicio</a>
-<img src="https://img.freepik.com/foto-gratis/perro-rubio-pelo-corto-mirando-al-suelo_1194-1079.jpg" alt="">
+<div class="error-container text-center">
+    <h1 class="display-1">404</h1>
+    <h2 class="display-4">¡Página no encontrada!</h2>
+    <p class="lead">Lo sentimos, la página que buscas no existe o ha sido movida.</p>
+    
+    <img 
+        src="https://img.freepik.com/foto-gratis/perro-rubio-pelo-corto-mirando-al-suelo_1194-1079.jpg" 
+        alt="Perro triste"
+        class="img-fluid my-4"
+        style="max-width: 400px;">
+    
+    <div class="mt-4">
+        <a class="btn btn-primary btn-lg" [routerLink]="['/home']" [routerLinkActive]="['selected']">
+            <i class="fas fa-home me-2"></i>
+            Volver al inicio
+        </a>
+    </div>
+</div>
