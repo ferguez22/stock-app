@@ -1,11 +1,56 @@
 .historial-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100%;
     padding: 20px;
+    height: 100%;
     overflow-y: auto;
-    background-color: rgb(212, 113, 113);
+}
+
+.header {
+    text-align: center;
+}
+
+.header h2 {
+    font-family: 'Rowdies', sans-serif;
+    color: #333;
+}
+
+.filters-container {
+    background-color: #f8f9fa;
     border-radius: 8px;
-    box-sizing: border-box;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.table-responsive {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    background-color: white;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.badge {
+    padding: 6px 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.user-badge {
+    background-color: #f1f1f1;
+    color: #666;
+    padding: 4px 8px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Botones de filtro */
+.btn-group .btn {
+    padding: 0.4rem 1rem;
+    font-weight: 500;
 }

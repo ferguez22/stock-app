@@ -1,4 +1,111 @@
-
 <div class="historial-container">
-<p>historial-transacciones works!</p>
+    <div class="header mb-4">
+        <h2>Historial de Transacciones</h2>
+        <p class="text-muted">
+            Registro de entradas y salidas de productos del inventario
+        </p>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters-container mb-4">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    <input type="text" class="form-control" placeholder="Buscar..." [(ngModel)]="searchTerm"
+                        (input)="onFilterChange()">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="btn-group w-100">
+                    <button class="btn" [class.btn-primary]="filterType === 'ALL'"
+                        [class.btn-outline-primary]="filterType !== 'ALL'"
+                        (click)="filterType = 'ALL'; onFilterChange()">
+                        Todos
+                    </button>
+                    <button class="btn" [class.btn-success]="filterType === 'IN'"
+                        [class.btn-outline-success]="filterType !== 'IN'" (click)="filterType = 'IN'; onFilterChange()">
+                        <i class="fas fa-arrow-down me-1"></i>Entradas
+                    </button>
+                    <button class="btn" [class.btn-danger]="filterType === 'OUT'"
+                        [class.btn-outline-danger]="filterType !== 'OUT'"
+                        (click)="filterType = 'OUT'; onFilterChange()">
+                        <i class="fas fa-arrow-up me-1"></i>Salidas
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estado de carga -->
+    @if (isLoading) {
+    <div class="text-center my-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2">Cargando transacciones...</p>
+    </div>
+    } @else if (error) {
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        {{ errorMessage }}
+    </div>
+    } @else {
+    <!-- Tabla de transacciones -->
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Producto</th>
+                    <th class="text-center">Cantidad</th>
+                    <th>Usuario</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (filteredTransactions.length > 0) {
+                @for (transaction of filteredTransactions; track $index) {
+                <tr>
+                    <td>{{ transaction.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                    <td>
+                        <span class="badge" [ngClass]="getTypeClass(transaction.type)">
+                            <i class="fas" [ngClass]="getTypeIcon(transaction.type)"></i>
+                            {{ getTypeText(transaction.type) }}
+                        </span>
+                    </td>
+                    <td>
+                        <div>{{ transaction.product?.item || 'Producto no disponible' }}</div>
+                        <small class="text-muted">{{ transaction.product?.code }}</small>
+                    </td>
+                    <td class="text-center">{{ transaction.quantity }}</td>
+                    <td>
+                        <span class="user-badge">
+                            <i class="fas fa-user me-1"></i>
+                            {{ transaction.user?.name || 'Usuario desconocido' }}
+                        </span>
+                    </td>
+                </tr>
+                }
+                } @else {
+                <tr>
+                    <td colspan="5" class="text-center py-4">
+                        <i class="fas fa-box-open me-2"></i>
+                        No se encontraron transacciones con los filtros aplicados
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (userRole === 'admin') {
+    <div class="mt-4 text-center">
+        <button class="btn btn-outline-secondary">
+            <i class="fas fa-file-export me-2"></i>
+            Exportar historial
+        </button>
+    </div>
+    }
+    }
 </div>

@@ -15,11 +15,21 @@
                 <td>{{ product.type }}</td>
                 <td>{{ product.item }}</td>
                 <td class="text-center">
-                    <span class="badge" [ngClass]="{
-                        'bg-danger': product.stock <= 2,
-                        'bg-warning': product.stock > 2 && product.stock <= 5,
-                        'bg-success': product.stock > 5
-                    }">{{ product.stock }}</span>
+                    <div class="stock-info">
+                        <div class="stock-in">
+                            <span class="badge" [ngClass]="{
+                                'bg-danger': product.stock <= 2,
+                                'bg-warning': product.stock > 2 && product.stock <= 5,
+                                'bg-success': product.stock > 5
+                            }">{{ product.stock }}</span>
+                            <small class="d-block mt-1">En almacén</small>
+                        </div>
+
+                        <div class="stock-out" *ngIf="product.outStock && product.outStock > 0">
+                            <span class="badge bg-secondary">{{ product.outStock }}</span>
+                            <small class="d-block mt-1">Fuera</small>
+                        </div>
+                    </div>
                 </td>
                 <td>
                     <div class="btn-group">

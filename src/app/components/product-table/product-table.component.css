@@ -12,3 +12,29 @@
     display: flex;
     gap: 5px;
 }
+
+.stock-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.stock-in,
+.stock-out {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stock-in small,
+.stock-out small {
+    font-size: 0.7rem;
+    color: #6c757d;
+}
+
+.badge {
+    min-width: 30px;
+    padding: 5px 8px;
+}
