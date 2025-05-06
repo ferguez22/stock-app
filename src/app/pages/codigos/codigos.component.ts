@@ -11,13 +11,18 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './codigos.component.html',
-  styleUrls: ['./codigos.component.css']
+  styleUrls: ['./codigos.component.css'],
 })
   
 export class CodigosComponent implements OnInit {
   products: IProduct[] = []; // Lista de productos cargados desde el inventario
   selectedProducts: { [key: string]: number } = {}; // Productos seleccionados con cantidad
   barcodePreviews: { [key: string]: string } = {}; // URLs de las miniaturas de códigos de barras
+  isLoading = true;
+  error = false;
+  errorMessage = ''
+  filteredProducts: IProduct[] = []; // Lista de productos filtrados por búsqueda
+  searchTerm: string = ''; // Término de búsqueda
 
   constructor(private productService: ProductService) {}
 
@@ -26,18 +31,27 @@ export class CodigosComponent implements OnInit {
   }
 
   loadProducts(): void {
+    this.isLoading = true;
+    this.error = false;
+    
     this.productService.getAll().subscribe({
       next: (products) => {
         this.products = products;
+        this.filteredProducts = [...products]; // Inicializar con todos los productos
+        
         // Generar todos los códigos de barras al cargar
         this.products.forEach(product => {
           if (product._id && product.code) {
             this.generateBarcodePreview(product._id, product.code);
           }
         });
+        this.isLoading = false;
       },
       error: (err) => {
         console.error('Error al cargar productos:', err);
+        this.error = true;
+        this.errorMessage = 'No se pudieron cargar los productos. Por favor, inténtalo de nuevo más tarde.';
+        this.isLoading = false;
       }
     });
   }
@@ -51,12 +65,11 @@ export class CodigosComponent implements OnInit {
     const product = this.products.find(p => p._id === productId);
     
     if (!this.selectedProducts[productId]) {
-      this.selectedProducts[productId] = 5; // Mínimo de 5 códigos por producto
+      this.selectedProducts[productId] = 1; // Mínimo de 1 código por producto
     } else {
       delete this.selectedProducts[productId];
     }
   }
-
 
   isSelected(productId: string): boolean {
     return !!this.selectedProducts[productId];
@@ -113,17 +126,17 @@ export class CodigosComponent implements OnInit {
       precision: 16
     });
     
-    // --- MODIFICA ESTOS VALORES PARA CAMBIAR EL TAMAÑO ---
-    const barcodeWidth = 50;  // Ancho del código en mm (5 cm)
-    const barcodeHeight = 20; // Alto del código en mm (2 cm)
-    const itemsPerRow = 3;    // Códigos por fila (ajustar según tamaño)
-    const itemsPerPage = 12;  // Códigos por página (ajustar según tamaño)
-    // ---------------------------------------------------
+      // --- CONFIGURACIÓN PARA 24 CÓDIGOS POR PÁGINA ---
+      const barcodeWidth = 40;  // Reducir ancho a 4 cm
+      const barcodeHeight = 15; // Reducir alto a 1.5 cm
+      const itemsPerRow = 4;    // 4 códigos por fila
+      const itemsPerPage = 24;  // 24 códigos por página (6 filas x 4 columnas)
+      const padding = 7;        // Reducir espacio entre códigos
+      // ---------------------------------------------------
     
     let x = 15;
     let y = 20;
     let currentItemCount = 0;
-    const padding = 10; // Espacio entre códigos (ajustar según tamaño)
 
     selectedProducts.forEach((product) => {
       const quantity = this.selectedProducts[product._id || ''];
@@ -132,8 +145,8 @@ export class CodigosComponent implements OnInit {
         const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         
         // --- MODIFICA ESTOS VALORES PARA RESOLUCIÓN SVG ---
-        svgElement.setAttribute("width", "1200");  // Resolución horizontal
-        svgElement.setAttribute("height", "600");  // Resolución vertical
+        svgElement.setAttribute("width", "1000");  // Resolución horizontal
+        svgElement.setAttribute("height", "500");  // Resolución vertical
         // -------------------------------------------------
         
         svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
@@ -208,10 +221,45 @@ export class CodigosComponent implements OnInit {
     });
   }
 
-// Añade este método a la clase CodigosComponent
-
   totalSelectedCount(): number {
     return Object.values(this.selectedProducts).reduce((total, qty) => total + qty, 0);
+  }
+
+// Añadir estos métodos a la clase CodigosComponent
+
+  incrementQuantity(productId: string): void {
+    if (!this.selectedProducts[productId]) {
+      this.selectedProducts[productId] = 1;
+    } else {
+      this.selectedProducts[productId]++;
+    }
+  }
+
+  decrementQuantity(productId: string): void {
+    if (this.selectedProducts[productId] && this.selectedProducts[productId] > 1) {
+      this.selectedProducts[productId]--;
+    } else {
+      // Si llega a 0 o menos, eliminar la selección
+      delete this.selectedProducts[productId];
+    }
+  }
+
+    applySearch(): void {
+    if (!this.searchTerm.trim()) {
+      this.filteredProducts = [...this.products];
+      return;
+    }
+
+    const term = this.searchTerm.toLowerCase().trim();
+    this.filteredProducts = this.products.filter(product => 
+      (product.item && product.item.toLowerCase().includes(term)) || 
+      (product.code && product.code.toLowerCase().includes(term))
+    );
+    }
+  
+    clearSearch(): void {
+    this.searchTerm = '';
+    this.filteredProducts = [...this.products];
   }
 
 }

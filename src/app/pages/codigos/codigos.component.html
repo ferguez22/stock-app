@@ -2,13 +2,50 @@
     <h2>Generación de Códigos de Barras</h2>
     <p class="text-muted">Selecciona los productos para generar códigos de barras.</p>
 
-    <!-- Grid de productos (5 por línea) -->
-    <div class="products-grid">
+    <!-- Estado de carga -->
+    @if (isLoading) {
+    <div class="text-center my-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2">Cargando productos...</p>
+    </div>
+    } @else if (error) {
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        {{ errorMessage }}
+    </div>
+    } @else {
 
-        @for (product of products; track product._id) {
+    <!-- Barra de búsqueda -->
+    <div class="search-container">
+        <div class="input-group mb-3">
+            <span class="input-group-text"><i class="fas fa-search"></i></span>
+            <input type="text" class="form-control" placeholder="Buscar por nombre o código..." [(ngModel)]="searchTerm"
+                (input)="applySearch()">
+            @if (searchTerm) {
+            <button class="btn btn-outline-secondary" type="button" (click)="clearSearch()">
+                <i class="fas fa-times"></i>
+            </button>
+            }
+        </div>
+    </div>
+
+    <!-- Mensaje cuando no hay resultados -->
+    @if (filteredProducts.length === 0 && !isLoading) {
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        No se encontraron productos que coincidan con tu búsqueda.
+    </div>
+    }
+
+    <!-- Grid de productos adaptable -->
+    <div class="products-grid">
+        @for (product of filteredProducts; track product._id) {
+        <!-- El resto del código de las tarjetas se mantiene igual -->
         <div class="product-card" [class.selected]="isSelected(product._id || '')"
             (click)="toggleSelection(product._id || '')">
-
+            <!-- ... contenido existente de cada tarjeta ... -->
             <div class="product-header">
                 <div class="product-status">
                     <span class="status-indicator" [class.selected]="isSelected(product._id || '')"></span>
@@ -25,20 +62,49 @@
 
             @if (isSelected(product._id || '')) {
             <div class="quantity-control">
-                <label for="qty-{{product._id}}">Cantidad:</label>
-                <input type="number" id="qty-{{product._id}}" min="5" [(ngModel)]="selectedProducts[product._id || '']"
-                    class="quantity-input" (click)="$event.stopPropagation()" />
+                <label for="qty-{{product._id}}"></label>
+                <div class="quantity-selector">
+                    <button class="quantity-btn"
+                        (click)="decrementQuantity(product._id || ''); $event.stopPropagation()">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <span class="quantity-value">{{ selectedProducts[product._id || ''] }}</span>
+                    <button class="quantity-btn"
+                        (click)="incrementQuantity(product._id || ''); $event.stopPropagation()">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
             </div>
             }
         </div>
         }
-        
     </div>
 
-    <!-- Botones de acción -->
-    <div class="actions mt-4">
+    <!-- Botón flotante para desktop -->
+    <div class="desktop-floating-actions" *ngIf="totalSelectedCount() > 0">
+        <div class="selected-counter">
+            {{ totalSelectedCount() }} códigos seleccionados
+        </div>
+        <button class="btn btn-success generate-btn" (click)="generatePDF()">
+            <i class="fas fa-file-pdf me-2"></i>Generar PDF
+        </button>
+    </div>
+    
+    <!-- Footer flotante para móvil con acciones -->
+    <div class="mobile-floating-actions">
+        <div class="selected-counter">
+            {{ totalSelectedCount() }} códigos seleccionados
+        </div>
+        <button class="btn btn-success generate-btn" [disabled]="totalSelectedCount() === 0" (click)="generatePDF()">
+            <i class="fas fa-file-pdf me-2"></i>Generar PDF
+        </button>
+    </div>
+    
+    <!-- Botones de acción para desktop (ahora ocultos) -->
+    <div class="desktop-actions mt-4">
         <button class="btn btn-success" (click)="generatePDF()" [disabled]="totalSelectedCount() === 0">
             <i class="fas fa-file-pdf me-2"></i>Descargar PDF ({{ totalSelectedCount() }} códigos)
         </button>
     </div>
-</div>
+    }
+    </div>
