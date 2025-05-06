@@ -196,6 +196,88 @@
     font-size: 0.85rem;
 }
 
+/* Añadir estos estilos al archivo CSS existente */
+
+/* Estilos para la tarjeta de bienvenida con acciones rápidas */
+.actions-subtitle {
+    font-size: 1rem;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    color: #666;
+}
+
+.user-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.btn-action-sm {
+    background-color: rgba(0, 0, 0, 0.05);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: #333;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-action-sm:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.btn-action-sm i {
+    font-size: 1rem;
+}
+
+.logout-btn {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.logout-btn:hover {
+    background-color: rgba(220, 53, 69, 0.2);
+}
+
+/* Estilos para la tarjeta de transacciones */
+.transactions-card {
+    background-color: white;
+}
+
+.recent-transactions {
+    overflow-y: auto;
+    margin-top: 10px;
+    max-height: 220px;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.transaction-item:last-child {
+    border-bottom: none;
+}
+
+.transaction-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.transaction-time {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
 /* Responsividad */
 @media (max-width: 992px) {
     .dashboard-grid {

@@ -7,12 +7,12 @@
     <!-- Grid principal de 2x2 -->
     <div class="dashboard-grid">
 
-        <!-- Superior izquierdo: Saludo al usuario -->
+        <!-- Superior izquierdo: Saludo al usuario y Acciones rápidas -->
         <div class="dashboard-card welcome-card">
             <h3 class="card-title">Bienvenido</h3>
 
             @if (currentUser) {
-            <div class="user-greeting">
+            <div class="user-greeting mb-3">
                 <div class="avatar-circle">
                     <i class="fas fa-user-circle fa-3x"></i>
                 </div>
@@ -27,6 +27,30 @@
                     <p class="mt-2">{{ getGreetingByTime() }}</p>
                 </div>
             </div>
+
+            <!-- Acciones rápidas (movidas de la esquina inferior derecha) -->
+            <div class="quick-actions-container mt-3">
+                <h5 class="actions-subtitle">Acciones Rápidas</h5>
+                <div class="quick-actions user-actions">
+                    <button class="btn btn-action-sm">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Nuevo Producto</span>
+                    </button>
+                    <button class="btn btn-action-sm">
+                        <i class="fas fa-barcode"></i>
+                        <span>Escanear</span>
+                    </button>
+                    <button class="btn btn-action-sm">
+                        <i class="fas fa-file-export"></i>
+                        <span>Exportar</span>
+                    </button>
+                    <button class="btn btn-action-sm logout-btn" (click)="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </div>
+            </div>
+
             } @else if (!userError) {
             <div class="loading-user">
                 <div class="spinner-border spinner-border-sm text-primary" role="status">
@@ -54,16 +78,20 @@
                     </div>
                 </div>
                 <div class="stat-item">
-                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                    <i class="fas fa-exchange-alt fa-2x"></i>
                     <div class="stat-info">
-                        <h4>{{ lowStockCount || '0' }}</h4>
-                        <p>Bajo stock</p>
+                        <h4>{{ totalTransactions || '0' }}</h4>
+                        <p>Transacciones</p>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-cubes fa-2x"></i>
+                    <div class="stat-info">
+                        <h4>{{ totalStockCount || '0' }}</h4>
+                        <p>Total en inventario</p>
                     </div>
                 </div>
             </div>
-            <a [routerLink]="['/inventario']" class="btn btn-sm btn-outline-primary mt-3">
-                <i class="fas fa-arrow-right me-1"></i> Ver inventario
-            </a>
         </div>
 
         <!-- Inferior izquierdo: Productos recientes -->
@@ -115,23 +143,52 @@
             }
         </div>
 
-        <!-- Inferior derecho: Acciones rápidas -->
-        <div class="dashboard-card actions-card">
-            <h3 class="card-title">Acciones Rápidas</h3>
-            <div class="quick-actions">
-                <button class="btn btn-action">
-                    <i class="fas fa-plus-circle fa-2x"></i>
-                    <span>Nuevo Producto</span>
-                </button>
-                <button class="btn btn-action">
-                    <i class="fas fa-barcode fa-2x"></i>
-                    <span>Escanear</span>
-                </button>
-                <button class="btn btn-action">
-                    <i class="fas fa-file-export fa-2x"></i>
-                    <span>Exportar</span>
-                </button>
+        <!-- Inferior derecho: Transacciones recientes (antes acciones rápidas) -->
+        <div class="dashboard-card transactions-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="card-title mb-0">Transacciones Recientes</h3>
+                <a [routerLink]="['/historial-transacciones']" class="btn btn-sm btn-link">
+                    Ver todas
+                </a>
             </div>
+
+            @if (isLoading) {
+            <div class="text-center my-3">
+                <div class="spinner-border spinner-border-sm text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p class="mt-1 small">Cargando transacciones...</p>
+            </div>
+            } @else if (error) {
+            <div class="alert alert-danger py-2">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Error al cargar transacciones
+            </div>
+            } @else {
+            <div class="recent-transactions">
+                @if (recentTransactions && recentTransactions.length > 0) {
+                @for (transaction of recentTransactions; track $index) {
+                <div class="transaction-item">
+                    <div class="transaction-details">
+                        <span class="product-name">{{ transaction.product?.item || 'Producto' }}</span>
+                        <span class="transaction-time">{{ transaction.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                    </div>
+                    <div class="transaction-type">
+                        <span class="badge" [ngClass]="transaction.type === 'IN' ? 'bg-success' : 'bg-danger'">
+                            <i class="fas" [ngClass]="transaction.type === 'IN' ? 'fa-arrow-down' : 'fa-arrow-up'"></i>
+                            {{ transaction.quantity }}
+                        </span>
+                    </div>
+                </div>
+                }
+                } @else {
+                <div class="text-center text-muted my-3">
+                    <i class="fas fa-exchange-alt me-2"></i>
+                    No hay transacciones recientes
+                </div>
+                }
+            </div>
+            }
         </div>
     </div>
 </div>
