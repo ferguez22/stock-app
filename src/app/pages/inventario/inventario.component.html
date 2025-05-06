@@ -9,6 +9,20 @@
         }
     </div>
 
+    <!-- Barra de búsqueda -->
+    <div class="search-container">
+        <div class="input-group mb-3">
+            <span class="input-group-text"><i class="fas fa-search"></i></span>
+            <input type="text" class="form-control" placeholder="Buscar por nombre o código..." [(ngModel)]="searchTerm"
+                (input)="applySearch()">
+            @if (searchTerm) {
+            <button class="btn btn-outline-secondary" type="button" (click)="clearSearch()">
+                <i class="fas fa-times"></i>
+            </button>
+            }
+        </div>
+    </div>
+
     <!-- Estado de carga -->
     <div [hidden]="!isLoading" class="text-center my-5">
         <div class="spinner-border text-primary" role="status">
@@ -23,17 +37,25 @@
         {{ errorMessage }}
     </div>
 
+    <!-- Mensaje cuando no hay resultados -->
+    @if (filteredProducts.length === 0 && !isLoading && !error) {
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        No se encontraron productos que coincidan con tu búsqueda.
+    </div>
+    }
+
     <!-- Vista de escritorio (tabla) -->
-    <div class="desktop-view" [hidden]="isLoading || error || products.length === 0">
-        <app-product-table [products]="products" [userRole]="userRole" (viewProduct)="handleViewProduct($event)"
+    <div class="desktop-view" [hidden]="isLoading || error || filteredProducts.length === 0">
+        <app-product-table [products]="filteredProducts" [userRole]="userRole" (viewProduct)="handleViewProduct($event)"
             (editProduct)="handleEditProduct($event)" (deleteProduct)="handleDeleteProduct($event)">
         </app-product-table>
     </div>
 
     <!-- Vista móvil (grid) -->
-    <div class="mobile-view" [hidden]="isLoading || error || products.length === 0">
+    <div class="mobile-view" [hidden]="isLoading || error || filteredProducts.length === 0">
         <div class="products-grid">
-            @for (product of products; track product._id) {
+            @for (product of filteredProducts; track product._id) {
             <div class="product-card">
                 <div class="product-header">
                     <span class="product-title">{{ product.item }}</span>
@@ -65,16 +87,5 @@
             </div>
             }
         </div>
-    </div>
-
-    <!-- Mensaje cuando no hay productos -->
-    <div [hidden]="isLoading || error || products.length > 0" class="alert alert-info">
-        <i class="fas fa-info-circle me-2"></i>
-        No hay productos en el inventario.
-        @if (userRole === 'admin') {
-        ¡Añade algunos para comenzar!
-        } @else {
-        Contacta con un administrador para añadir productos.
-        }
     </div>
 </div>

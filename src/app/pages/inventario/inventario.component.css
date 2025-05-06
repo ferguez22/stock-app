@@ -175,3 +175,43 @@
         /* 1 elemento por fila en móviles pequeños */
     }
 }
+
+
+/* Añadir estos estilos al final del archivo */
+
+/* Estilos para la barra de búsqueda */
+.search-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 20px;
+}
+
+.search-container .input-group {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.search-container .input-group-text {
+    background-color: #fff;
+    border-right: none;
+}
+
+.search-container .form-control {
+    border-left: none;
+}
+
+.search-container .form-control:focus {
+    box-shadow: none;
+    border-color: #ced4da;
+}
+
+.search-container .btn {
+    border-color: #ced4da;
+    border-left: none;
+}
+
+/* Media query para ajustar en dispositivos móviles */
+@media (max-width: 768px) {
+    .search-container {
+        max-width: 100%;
+    }
+}

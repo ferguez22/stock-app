@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms'; // Añadir importación
 import { ProductService } from '../../services/product.service';
 import { AuthService } from '../../services/user.service';
 import { TokenService } from '../../services/token.service';
@@ -12,12 +13,15 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-inventario',
   standalone: true,
-  imports: [CommonModule, ProductTableComponent],
+  imports: [CommonModule, FormsModule, ProductTableComponent], // Añadir FormsModule
   templateUrl: './inventario.component.html',
   styleUrl: './inventario.component.css'
 })
+  
 export class InventarioComponent implements OnInit {
   products: IProduct[] = [];
+  filteredProducts: IProduct[] = []; // Nueva propiedad para productos filtrados
+  searchTerm: string = ''; // Término de búsqueda
   isLoading = true;
   error = false;
   errorMessage = '';
@@ -68,6 +72,7 @@ export class InventarioComponent implements OnInit {
         next: (products) => {
           console.log('Productos recibidos:', products);
           this.products = products;
+          this.filteredProducts = [...products]; // Inicializar filteredProducts con todos los productos
         },
         error: (err) => {
           console.error('Error al cargar productos:', err);
@@ -75,6 +80,27 @@ export class InventarioComponent implements OnInit {
           this.errorMessage = 'No se pudieron cargar los productos. Por favor, inténtalo de nuevo más tarde.';
         }
       });
+  }
+
+  // Método para aplicar la búsqueda
+  applySearch(): void {
+    if (!this.searchTerm.trim()) {
+      this.filteredProducts = [...this.products];
+      return;
+    }
+
+    const term = this.searchTerm.toLowerCase().trim();
+    this.filteredProducts = this.products.filter(product => 
+      (product.item && product.item.toLowerCase().includes(term)) || 
+      (product.code && product.code.toLowerCase().includes(term)) ||
+      (product.type && product.type.toLowerCase().includes(term))
+    );
+  }
+
+  // Método para limpiar la búsqueda
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.filteredProducts = [...this.products];
   }
 
   handleViewProduct(product: IProduct): void {
