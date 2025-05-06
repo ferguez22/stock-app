@@ -1,11 +1,18 @@
 <div class="layout-container">
-    <aside class="sidebar" [class.collapsed]="isNavbarCollapsed">
+    <!-- Sidebar para desktop -->
+    <aside class="sidebar desktop-sidebar" [class.collapsed]="isNavbarCollapsed">
         <app-navbar></app-navbar>
     </aside>
 
-    <main class="main-content" [class.collapsed]="isNavbarCollapsed">
+    <!-- Contenido principal -->
+    <main class="main-content" [class.collapsed]="isNavbarCollapsed" [class.has-mobile-nav]="true">
         <div class="component-container">
             <router-outlet></router-outlet>
         </div>
     </main>
+
+    <!-- Navbar móvil en la parte inferior -->
+    <nav class="mobile-navbar">
+        <app-navbar [isMobile]="true"></app-navbar>
+    </nav>
 </div>

@@ -76,32 +76,27 @@
     /* Centra el icono horizontalmente */
 }
 
-/* Efecto para los iconos cuando se hace hover */
 .nav-link:hover i {
     color: #0d6efd;
     transform: scale(1.2);
 }
 
-/* Efecto para el texto cuando se hace hover */
 .nav-link:hover span {
     font-weight: 500;
     color: #0d6efd;
 }
 
-/* Modifica la regla existente para los iconos */
 .nav-link i {
     transition: all 0.3s ease;
-    margin-right: 12px; /* Espacio entre el icono y el texto */
-    width: 20px; /* Ancho fijo para alinear todos los textos */
-    text-align: center; /* Centra los iconos en su espacio */
+    margin-right: 12px; 
+    width: 20px;
+    text-align: center; 
 }
 
-/* Ajuste para cuando la barra está colapsada */
 .navbar.collapsed .nav-link i {
-    margin-right: 0; /* Elimina el margen cuando está colapsado */
+    margin-right: 0; 
 }
 
-/* Efectos específicos para la navbar colapsada */
 .navbar.collapsed .nav-link:hover {
     background-color: rgba(255, 255, 255, 0.06);
     transform: translateX(3px);
@@ -113,7 +108,6 @@
     color: #0d6efd;
 }
 
-/* Indicador visual en el lado izquierdo al hacer hover */
 .nav-link::before {
     content: "";
     position: absolute;
@@ -131,9 +125,65 @@
     width: 3px;
 }
 
-/* Añadir al final del archivo */
+/* Estilos para la navbar móvil */
+.navbar-mobile {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: #333b44;
+    color: white;
+    padding: 0;
+}
 
-/* Estilo para el texto en la navbar */
+.mobile-nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+    flex: 1;
+    padding: 8px 0;
+    transition: all 0.2s ease;
+    font-size: 0.8rem;
+}
+
+.mobile-nav-link i {
+    font-size: 1.4rem;
+    margin-bottom: 4px;
+}
+
+.mobile-nav-link.active {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.mobile-nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    transform: translateY(-3px);
+}
+
+.mobile-nav-text {
+    font-size: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+@media (max-width: 360px) {
+    .mobile-nav-text {
+        display: none;
+    }
+    
+    .mobile-nav-link i {
+        font-size: 1.6rem;
+        margin-bottom: 0;
+    }
+}
+
 .nav-text {
     transition: all 0.3s ease;
     opacity: 1;
@@ -141,12 +191,9 @@
     overflow: hidden;
     white-space: nowrap;
     display: inline-flex;
-    /* Igual que los iconos */
     align-items: center;
-    /* Centra el texto verticalmente */
 }
 
-/* Estilo para el texto cuando la navbar está colapsada */
 .collapsed-text {
     opacity: 0;
     width: 0;
@@ -154,13 +201,11 @@
     transform: translateX(-10px);
 }
 
-/* Mejora la transición del icono */
 .navbar.collapsed .nav-link i {
     margin-right: 0;
     transition: all 0.3s ease;
 }
 
-/* Ajuste para que el icono se centre cuando la navbar está colapsada */
 .navbar.collapsed .nav-link {
     justify-content: center;
     display: flex;

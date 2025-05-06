@@ -1,6 +1,6 @@
-<!-- navbar.component.html -->
-<nav class="navbar flex-column p-3" [class.collapsed]="isCollapsed">
-    
+<!-- Desktop Navbar (vertical) -->
+<nav *ngIf="!isMobile" class="navbar flex-column p-3" [class.collapsed]="isCollapsed">
+
     <div class="navbar-header d-flex align-items-center mb-4">
         <a class="navbar-brand" [class.collapsed-text]="isCollapsed">
             <i class="fa-solid fa-box-open me-2"></i>
@@ -22,7 +22,8 @@
             <i class="fas fa-boxes"></i> <span class="nav-text" [class.collapsed-text]="isCollapsed">Inventario</span>
         </a>
         <a class="nav-link mb-2" [routerLink]="['/escaner']" [routerLinkActive]="['active']">
-            <i class="fa-solid fa-expand"></i> <span class="nav-text" [class.collapsed-text]="isCollapsed">Escaner</span>
+            <i class="fa-solid fa-expand"></i> <span class="nav-text"
+                [class.collapsed-text]="isCollapsed">Escaner</span>
         </a>
         <a class="nav-link mb-2" [routerLink]="['/codigos']" [routerLinkActive]="['active']">
             <i class="fas fa-barcode"></i> <span class="nav-text" [class.collapsed-text]="isCollapsed">Códigos</span>
@@ -31,5 +32,32 @@
             <i class="fas fa-user"></i> <span class="nav-text" [class.collapsed-text]="isCollapsed">Perfil</span>
         </a>
     </div>
-    
+</nav>
+
+<!-- Mobile Navbar (horizontal) -->
+<nav *ngIf="isMobile" class="navbar-mobile">
+    <a class="mobile-nav-link" [routerLink]="['/home']" [routerLinkActive]="['active']">
+        <i class="fas fa-home"></i>
+        <span class="mobile-nav-text">Inicio</span>
+    </a>
+    <a class="mobile-nav-link" [routerLink]="['/historial']" [routerLinkActive]="['active']">
+        <i class="fas fa-history"></i>
+        <span class="mobile-nav-text">Historial</span>
+    </a>
+    <a class="mobile-nav-link" [routerLink]="['/inventario']" [routerLinkActive]="['active']">
+        <i class="fas fa-boxes"></i>
+        <span class="mobile-nav-text">Inventario</span>
+    </a>
+    <a class="mobile-nav-link" [routerLink]="['/escaner']" [routerLinkActive]="['active']">
+        <i class="fa-solid fa-expand"></i>
+        <span class="mobile-nav-text">Escaner</span>
+    </a>
+    <a class="mobile-nav-link" [routerLink]="['/codigos']" [routerLinkActive]="['active']">
+        <i class="fas fa-barcode"></i>
+        <span class="mobile-nav-text">Códigos</span>
+    </a>
+    <a class="mobile-nav-link" [routerLink]="['/perfil']" [routerLinkActive]="['active']">
+        <i class="fas fa-user"></i>
+        <span class="mobile-nav-text">Perfil</span>
+    </a>
 </nav>
