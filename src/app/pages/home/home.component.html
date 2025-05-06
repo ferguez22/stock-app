@@ -12,21 +12,25 @@
             <h3 class="card-title">Bienvenido</h3>
 
             @if (currentUser) {
-            <div class="user-greeting mb-3">
-                <div class="avatar-circle">
-                    <i class="fas fa-user-circle fa-3x"></i>
-                </div>
-                <div class="greeting-text">
-                    <h4>¡Hola, {{ currentUser.name }}!</h4>
-                    <p class="badge" [ngClass]="{
-              'bg-danger': currentUser.role === 'admin',
-              'bg-primary': currentUser.role === 'user'
-            }">
-                        {{ currentUser.role }}
-                    </p>
-                    <p class="mt-2">{{ getGreetingByTime() }}</p>
-                </div>
+<!-- Solo modificar la parte del saludo para móvil -->
+
+        <div class="user-greeting mb-3" [class.mobile-greeting]="isMobile">
+            <div class="avatar-circle">
+                <i class="fas fa-user-circle" [class.fa-2x]="isMobile" [class.fa-3x]="!isMobile"></i>
             </div>
+            <div class="greeting-text">
+                <h4>¡Hola, {{ currentUser.name }}!</h4>
+                <p class="badge" [ngClass]="{
+                    'bg-danger': currentUser.role === 'admin',
+                    'bg-primary': currentUser.role === 'user'
+                }">
+                    {{ currentUser.role }}
+                </p>
+                @if (!isMobile) {
+                <p class="mt-2">{{ getGreetingByTime() }}</p>
+                }
+            </div>
+        </div>
 
             <!-- Acciones rápidas (movidas de la esquina inferior derecha) -->
             <div class="quick-actions-container mt-3">

@@ -1,6 +1,6 @@
 // Añadir la propiedad recentTransactions y cargarla en loadDashboardData
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { ProductService } from '../../services/product.service';
@@ -19,6 +19,7 @@ import { finalize, forkJoin } from 'rxjs';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
+  
 export class HomeComponent implements OnInit {
   products: IProduct[] = [];
   recentProducts: IProduct[] = [];
@@ -31,6 +32,7 @@ export class HomeComponent implements OnInit {
   lowStockCount = 0;
   totalStockCount = 0;
   totalTransactions = 0;
+  isMobile = false;
   
   constructor(
     private productService: ProductService,
@@ -40,11 +42,21 @@ export class HomeComponent implements OnInit {
     private router: Router
   ) {}
   
+@HostListener('window:resize', ['$event'])
+onResize() {
+    this.checkScreenSize();
+}
+
   ngOnInit(): void {
-    this.loadUserData();
-    this.loadDashboardData();
+      this.loadUserData();
+      this.loadDashboardData();
+      this.checkScreenSize();
   }
   
+  checkScreenSize() {
+      this.isMobile = window.innerWidth < 576;
+  }
+
   loadUserData(): void {
     const cachedUser = this.tokenService.getUser();
     if (cachedUser) {
