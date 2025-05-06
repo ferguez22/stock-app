@@ -63,3 +63,115 @@
     padding: 6px 10px;
     font-weight: normal;
 }
+
+/* Configuración para vistas desktop/mobile */
+.desktop-view {
+    display: block;
+    width: 100%;
+}
+
+.mobile-view {
+    display: none;
+    width: 100%;
+}
+
+/* Estilos para la vista de grid en mobile */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* 3 elementos por fila */
+    gap: 12px;
+    width: 100%;
+}
+
+.product-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.product-header {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+}
+
+.product-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.product-code {
+    background-color: #f1f1f1;
+    color: #666;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-family: monospace;
+    display: inline-block;
+    margin-top: 4px;
+}
+
+.product-details {
+    flex-grow: 1;
+    font-size: 0.8rem;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.detail-label {
+    font-weight: 500;
+    color: #555;
+}
+
+.product-actions {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+    gap: 5px;
+}
+
+.product-actions .btn {
+    padding: 0.25rem 0.5rem;
+}
+
+/* Media queries para responsive */
+@media (max-width: 992px) {
+    .desktop-view {
+        display: none;
+    }
+
+    .mobile-view {
+        display: block;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+        /* 3 elementos por fila en tablets */
+    }
+}
+
+@media (max-width: 768px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        /* 2 elementos por fila en móviles medianos */
+    }
+}
+
+@media (max-width: 480px) {
+    .products-grid {
+        grid-template-columns: 1fr;
+        /* 1 elemento por fila en móviles pequeños */
+    }
+}

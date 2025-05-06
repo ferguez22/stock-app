@@ -3,9 +3,9 @@
         <h2>Inventario de Productos</h2>
         <!-- Solo mostrar botón de nuevo producto para admin -->
         @if (userRole === 'admin') {
-            <button class="btn btn-primary">
-                <i class="fas fa-plus me-2"></i>Nuevo Producto
-            </button>
+        <button class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Nuevo Producto
+        </button>
         }
     </div>
 
@@ -23,20 +23,58 @@
         {{ errorMessage }}
     </div>
 
-    <!-- Tabla de productos - Ahora como componente -->
-    <app-product-table [hidden]="isLoading || error || products.length === 0" [products]="products"
-        [userRole]="userRole" (viewProduct)="handleViewProduct($event)" (editProduct)="handleEditProduct($event)"
-        (deleteProduct)="handleDeleteProduct($event)">
-    </app-product-table>
+    <!-- Vista de escritorio (tabla) -->
+    <div class="desktop-view" [hidden]="isLoading || error || products.length === 0">
+        <app-product-table [products]="products" [userRole]="userRole" (viewProduct)="handleViewProduct($event)"
+            (editProduct)="handleEditProduct($event)" (deleteProduct)="handleDeleteProduct($event)">
+        </app-product-table>
+    </div>
+
+    <!-- Vista móvil (grid) -->
+    <div class="mobile-view" [hidden]="isLoading || error || products.length === 0">
+        <div class="products-grid">
+            @for (product of products; track product._id) {
+            <div class="product-card">
+                <div class="product-header">
+                    <span class="product-title">{{ product.item }}</span>
+                    <span class="product-code">{{ product.code }}</span>
+                </div>
+                <div class="product-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Stock:</span>
+                        <span class="detail-value">{{ product.stock }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Tipo:</span>
+                        <span class="detail-value">{{ product.type }}</span>
+                    </div>
+                </div>
+                <div class="product-actions">
+                    <button class="btn btn-sm btn-info" (click)="handleViewProduct(product)">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    @if (userRole === 'admin') {
+                    <button class="btn btn-sm btn-primary" (click)="handleEditProduct(product)">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" (click)="handleDeleteProduct(product)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+    </div>
 
     <!-- Mensaje cuando no hay productos -->
     <div [hidden]="isLoading || error || products.length > 0" class="alert alert-info">
         <i class="fas fa-info-circle me-2"></i>
         No hay productos en el inventario.
         @if (userRole === 'admin') {
-            ¡Añade algunos para comenzar!
+        ¡Añade algunos para comenzar!
         } @else {
-            Contacta con un administrador para añadir productos.
+        Contacta con un administrador para añadir productos.
         }
     </div>
 </div>
