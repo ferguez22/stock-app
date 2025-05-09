@@ -20,8 +20,8 @@ export class AuthService {
     private router: Router
   ) {}
 
-  register(user: IUser): Observable<IAuthResponse> {
-    return this.http.post<IAuthResponse>(`${this.apiUrl}/register`, user);
+  createUser(userData: { name: string, email: string, password: string, role: string }): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/register`, userData);
   }
 
   login(credentials: { email: string, password: string }): Observable<IAuthResponse> {
@@ -90,4 +90,5 @@ export class AuthService {
       return null;
     }
   }
+  
 }

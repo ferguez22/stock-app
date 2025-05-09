@@ -1,52 +1,161 @@
 <div class="perfil-container">
+
     <!-- Spinner de carga -->
     @if (isLoading && !currentUser) {
-        <div class="text-center my-5">
-            <div class="spinner-border text-light" role="status">
-                <span class="visually-hidden">Cargando...</span>
-            </div>
-            <p class="text-light mt-2">Cargando datos del usuario...</p>
+    <div class="text-center my-5">
+        <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">Cargando...</span>
         </div>
+        <p class="text-light mt-2">Cargando datos del usuario...</p>
+    </div>
     }
 
     <!-- Error -->
     @if (error) {
-        <div class="alert alert-danger">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            {{ errorMessage || 'Error al cargar los datos del usuario' }}
-        </div>
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        {{ errorMessage || 'Error al cargar los datos del usuario' }}
+    </div>
     }
 
     <!-- Información del usuario -->
     @if (currentUser) {
-        <div class="card profile-card" [ngClass]="{'opacity-50': isLoading}">
-            <div class="card-body text-center">
-                <div class="profile-avatar mb-3">
-                    <i class="fa-solid fa-user-circle fa-5x"></i>
-                </div>
+    <div class="card profile-card" [ngClass]="{ 'opacity-50': isLoading }">
+        <div class="card-body text-center">
+            <div class="profile-avatar mb-3">
+                <i class="fa-solid fa-user-circle fa-5x"></i>
+            </div>
 
-                <h3 class="card-title">{{ currentUser.name }}</h3>
-                <p class="card-text text-muted mb-4">{{ currentUser.email }}</p>
-                <p class="card-text badge"
-                    [ngClass]="{'bg-danger': currentUser.role === 'admin', 'bg-primary': currentUser.role === 'user'}">
-                    {{ currentUser.role }}
-                </p>
+            <h3 class="card-title">{{ currentUser.name }}</h3>
+            <p class="card-text text-muted mb-4">{{ currentUser.email }}</p>
+            <p class="card-text badge"
+                [ngClass]="{ 'bg-danger': currentUser.role === 'admin', 'bg-primary': currentUser.role === 'user' }">
+                {{ currentUser.role }}
+            </p>
 
-                @if (currentUser.createdAt) {
-                    <div class="text-muted small mt-3">
-                        <p class="mb-0">Miembro desde: {{ currentUser.createdAt | date:'mediumDate' }}</p>
-                    </div>
+            @if (currentUser.createdAt) {
+            <div class="text-muted small mt-3">
+                <p class="mb-0">Miembro desde: {{ currentUser.createdAt | date:'mediumDate' }}</p>
+            </div>
+            }
+
+            <div class="d-grid gap-2 mt-4">
+                @if (currentUser.role === 'admin') {
+                <button class="btn mb-2" [ngClass]="showUserForm ? 'btn-danger' : 'btn-success'" (click)="toggleUserForm()">
+                    <i class="fas me-2" [ngClass]="showUserForm ? 'fa-times' : 'fa-user-plus'"></i>
+                    {{ showUserForm ? 'Cancelar' : 'Crear Nuevo Usuario' }}
+                </button>
                 }
 
-                <div class="d-grid gap-2 mt-4">
-                    <button class="btn btn-primary mb-2">
-                        <i class="fas fa-edit me-2"></i>Editar Perfil
-                    </button>
-                    <button class="btn btn-outline-danger" (click)="logout()">
-                        <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
-                    </button>
-                </div>
+                <button class="btn btn-primary mb-2">
+                    <i class="fas fa-edit me-2"></i>Editar Perfil
+                </button>
+                <button class="btn btn-outline-danger" (click)="logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                </button>
             </div>
         </div>
+    </div>
+
+    @if (currentUser.role === 'admin') {
+    <div class="create-user-form" [ngClass]="{ 'show-form': showUserForm }">
+        <div class="card mt-4">
+            <div class="card-body">
+                <form [formGroup]="createUserForm" (ngSubmit)="onCreateUserSubmit()">
+
+                    <!-- Nombre -->
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nombre completo</label>
+                        <input type="text" id="name" formControlName="name" class="form-control"
+                            [ngClass]="{ 'is-invalid': createUserForm.get('name')?.invalid && createUserForm.get('name')?.touched }">
+
+                        @if (createUserForm.get('name')?.invalid && createUserForm.get('name')?.touched) {
+                        <div class="invalid-feedback">
+                            El nombre es obligatorio
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Correo electrónico</label>
+                        <input type="email" id="email" formControlName="email" class="form-control"
+                            [ngClass]="{ 'is-invalid': createUserForm.get('email')?.invalid && createUserForm.get('email')?.touched }">
+
+                        @if (createUserForm.get('email')?.invalid && createUserForm.get('email')?.touched) {
+                        <div class="invalid-feedback">
+                            @if (createUserForm.get('email')?.errors?.['required']) {
+                            <span>El correo es obligatorio</span>
+                            }
+                            @if (createUserForm.get('email')?.errors?.['email']) {
+                            <span>Ingrese un correo válido</span>
+                            }
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Rol -->
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Rol</label>
+                        <select id="role" formControlName="role" class="form-select">
+                            <option value="user">Usuario</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" id="password" formControlName="password" class="form-control"
+                            [ngClass]="{ 'is-invalid': createUserForm.get('password')?.invalid && createUserForm.get('password')?.touched }">
+
+                        @if (createUserForm.get('password')?.invalid && createUserForm.get('password')?.touched) {
+                        <div class="invalid-feedback">
+                            @if (createUserForm.get('password')?.errors?.['required']) {
+                            <span>La contraseña es obligatoria</span>
+                            }
+                            @if (createUserForm.get('password')?.errors?.['minlength']) {
+                            <span>La contraseña debe tener al menos 6 caracteres</span>
+                            }
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Confirmar Contraseña -->
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
+                        <input type="password" id="confirmPassword" formControlName="confirmPassword" class="form-control"
+                            [ngClass]="{ 'is-invalid': createUserForm.get('confirmPassword')?.invalid && createUserForm.get('confirmPassword')?.touched }">
+
+                        @if (createUserForm.get('confirmPassword')?.invalid &&
+                        createUserForm.get('confirmPassword')?.touched) {
+                        <div class="invalid-feedback">
+                            @if (createUserForm.get('confirmPassword')?.errors?.['required']) {
+                            <span>Debe confirmar la contraseña</span>
+                            }
+                            @if (createUserForm.get('confirmPassword')?.errors?.['passwordMismatch']) {
+                            <span>Las contraseñas no coinciden</span>
+                            }
+                        </div>
+                        }
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-outline-danger me-2"
+                            (click)="toggleUserForm()">Cancelar</button>
+                        <button type="submit" class="btn btn-success" [disabled]="submittingUser">
+                            @if (submittingUser) {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Crear Usuario
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
     }
+    }
+
 </div>
