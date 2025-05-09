@@ -6,7 +6,7 @@
         </p>
     </div>
 
-    <!-- Filtros -->
+    <!-- Filtros optimizados para móvil -->
     <div class="filters-container mb-4">
         <div class="row g-3">
             <div class="col-md-6">
@@ -17,7 +17,7 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="btn-group w-100">
+                <div class="btn-group w-100 filter-buttons">
                     <button class="btn" [class.btn-primary]="filterType === 'ALL'"
                         [class.btn-outline-primary]="filterType !== 'ALL'"
                         (click)="filterType = 'ALL'; onFilterChange()">
@@ -25,12 +25,14 @@
                     </button>
                     <button class="btn" [class.btn-success]="filterType === 'IN'"
                         [class.btn-outline-success]="filterType !== 'IN'" (click)="filterType = 'IN'; onFilterChange()">
-                        <i class="fas fa-arrow-down me-1"></i>Entradas
+                        <i class="fas fa-arrow-down"></i>
+                        <span class="btn-text">Entradas</span>
                     </button>
                     <button class="btn" [class.btn-danger]="filterType === 'OUT'"
                         [class.btn-outline-danger]="filterType !== 'OUT'"
                         (click)="filterType = 'OUT'; onFilterChange()">
-                        <i class="fas fa-arrow-up me-1"></i>Salidas
+                        <i class="fas fa-arrow-up"></i>
+                        <span class="btn-text">Salidas</span>
                     </button>
                 </div>
             </div>
@@ -51,59 +53,105 @@
         {{ errorMessage }}
     </div>
     } @else {
-    <!-- Tabla de transacciones -->
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Tipo</th>
-                    <th>Producto</th>
-                    <th class="text-center">Cantidad</th>
-                    <th>Usuario</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (filteredTransactions.length > 0) {
-                @for (transaction of filteredTransactions; track $index) {
-                <tr>
-                    <td>{{ transaction.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
-                    <td>
-                        <span class="badge" [ngClass]="getTypeClass(transaction.type)">
-                            <i class="fas" [ngClass]="getTypeIcon(transaction.type)"></i>
-                            {{ getTypeText(transaction.type) }}
-                        </span>
-                    </td>
-                    <td>
-                        <div>{{ transaction.product?.item || 'Producto no disponible' }}</div>
-                        <small class="text-muted">{{ transaction.product?.code }}</small>
-                    </td>
-                    <td class="text-center">{{ transaction.quantity }}</td>
-                    <td>
+
+    <!-- Vista Desktop - Tabla de transacciones -->
+    <div class="desktop-view">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Tipo</th>
+                        <th>Producto</th>
+                        <th class="text-center">Cantidad</th>
+                        <th>Usuario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (filteredTransactions.length > 0) {
+                    @for (transaction of filteredTransactions; track $index) {
+                    <tr>
+                        <td>{{ transaction.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                        <td>
+                            <span class="badge" [ngClass]="getTypeClass(transaction.type)">
+                                <i class="fas" [ngClass]="getTypeIcon(transaction.type)"></i>
+                                {{ getTypeText(transaction.type) }}
+                            </span>
+                        </td>
+                        <td>
+                            <div>{{ transaction.product?.item || 'Producto no disponible' }}</div>
+                            <small class="text-muted">{{ transaction.product?.code }}</small>
+                        </td>
+                        <td class="text-center">{{ transaction.quantity }}</td>
+                        <td>
+                            <span class="user-badge">
+                                <i class="fas fa-user me-1"></i>
+                                {{ transaction.user?.name || 'Usuario desconocido' }}
+                            </span>
+                        </td>
+                    </tr>
+                    }
+                    } @else {
+                    <tr>
+                        <td colspan="5" class="text-center py-4">
+                            <i class="fas fa-box-open me-2"></i>
+                            No se encontraron transacciones con los filtros aplicados
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Vista Mobile - Tarjetas de transacciones -->
+    <div class="mobile-view">
+        <div class="transactions-grid">
+            @if (filteredTransactions.length > 0) {
+            @for (transaction of filteredTransactions; track $index) {
+            <div class="transaction-card">
+                <div class="transaction-header">
+                    <span class="badge" [ngClass]="getTypeClass(transaction.type)">
+                        <i class="fas" [ngClass]="getTypeIcon(transaction.type)"></i>
+                        {{ getTypeText(transaction.type) }}
+                    </span>
+                    <span class="transaction-date">{{ transaction.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+
+                <div class="transaction-product">
+                    <div class="product-name">{{ transaction.product?.item || 'Producto no disponible' }}</div>
+                    <div class="product-code">{{ transaction.product?.code }}</div>
+                </div>
+
+                <div class="transaction-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Cantidad:</span>
+                        <span class="detail-value">{{ transaction.quantity }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Usuario:</span>
                         <span class="user-badge">
                             <i class="fas fa-user me-1"></i>
                             {{ transaction.user?.name || 'Usuario desconocido' }}
                         </span>
-                    </td>
-                </tr>
-                }
-                } @else {
-                <tr>
-                    <td colspan="5" class="text-center py-4">
-                        <i class="fas fa-box-open me-2"></i>
-                        No se encontraron transacciones con los filtros aplicados
-                    </td>
-                </tr>
-                }
-            </tbody>
-        </table>
+                    </div>
+                </div>
+            </div>
+            }
+            } @else {
+            <div class="no-results">
+                <i class="fas fa-box-open me-2"></i>
+                No se encontraron transacciones con los filtros aplicados
+            </div>
+            }
+        </div>
     </div>
 
     @if (userRole === 'admin') {
     <div class="mt-4 text-center">
         <button class="btn btn-outline-secondary">
             <i class="fas fa-file-export me-2"></i>
-            Exportar historial
+            <span class="export-text">Exportar historial</span>
         </button>
     </div>
     }
