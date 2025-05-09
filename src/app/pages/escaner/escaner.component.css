@@ -1,11 +1,74 @@
 .escaner-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
     height: 100%;
     padding: 20px;
     overflow-y: auto;
-    background-color: rgba(94, 238, 166, 0.809);
+    background-color: #f5f7fa;
     border-radius: 8px;
     box-sizing: border-box;
+}
+
+.header h2 {
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.scanner-area {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    border: none;
+}
+
+.scanner-controls {
+    display: flex;
+    justify-content: center;
+}
+
+.scanner-placeholder {
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.scanner-toggle-btn {
+    min-width: 180px;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eaeaea;
+    padding: 12px 15px;
+}
+
+.card-header h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Ajuste para dispositivos móviles */
+@media (max-width: 768px) {
+    .escaner-container {
+        padding: 15px;
+        padding-bottom: 80px;
+        /* Espacio para la navbar inferior */
+    }
+
+    .scanner-placeholder {
+        min-height: 200px;
+    }
 }

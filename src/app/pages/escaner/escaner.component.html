@@ -1,3 +1,60 @@
 <div class="escaner-container">
-<p>escaner works!</p>
+    <!-- Encabezado -->
+    <div class="header mb-4">
+        <h2>Escáner de Productos</h2>
+        <p class="text-muted">Escanea códigos de barras para registrar movimientos de inventario</p>
+    </div>
+
+    <!-- Área del escáner -->
+    <div class="scanner-area card mb-4">
+        <div class="card-body">
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                <input #barcodeInput type="text" class="form-control"
+                    placeholder="Escanea un código o escríbelo manualmente" [(ngModel)]="scannedCode"
+                    (keydown.enter)="processBarcode()" autofocus>
+                <button class="btn btn-primary" (click)="processBarcode()">
+                    <i class="fas fa-search me-2"></i>Buscar
+                </button>
+            </div>
+
+            <div class="scanner-mode-toggle text-center mb-3">
+                <div class="btn-group" role="group">
+                    <button class="btn" [class.btn-primary]="scannerMode === 'usb'"
+                        [class.btn-outline-primary]="scannerMode !== 'usb'" (click)="setScannerMode('usb')">
+                        <i class="fas fa-keyboard me-2"></i>Escáner USB
+                    </button>
+                    <button class="btn" [class.btn-primary]="scannerMode === 'camera'"
+                        [class.btn-outline-primary]="scannerMode !== 'camera'" (click)="setScannerMode('camera')">
+                        <i class="fas fa-camera me-2"></i>Cámara
+                    </button>
+                </div>
+            </div>
+
+            <!-- Componente de cámara (se muestra solo cuando está en modo cámara) -->
+            <div [hidden]="scannerMode !== 'camera'" class="camera-scanner">
+                <!-- Aquí irá el componente de escáner con cámara -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Productos del usuario actual -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4 class="m-0">Tus productos fuera de almacén</h4>
+        </div>
+        <div class="card-body">
+            <p class="text-muted text-center">No tienes productos fuera de almacén</p>
+        </div>
+    </div>
+
+    <!-- Productos de otros usuarios -->
+    <div class="card">
+        <div class="card-header">
+            <h4 class="m-0">Productos fuera de almacén (otros usuarios)</h4>
+        </div>
+        <div class="card-body">
+            <p class="text-muted text-center">No hay productos fuera de almacén</p>
+        </div>
+    </div>
 </div>

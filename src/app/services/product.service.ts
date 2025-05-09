@@ -43,4 +43,15 @@ export class ProductService {
   delete(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+  // En product.service.ts
+findByBarcode(barcode: string): Observable<IProduct> {
+  return this.http.get<IProduct>(`${this.apiUrl}/barcode/${barcode}`).pipe(
+    catchError(err => {
+      console.error('Error buscando producto por código de barras:', err);
+      return throwError(() => new Error('No se encontró el producto'));
+    })
+  );
+}
+
 }
