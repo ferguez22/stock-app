@@ -44,14 +44,19 @@ export class ProductService {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
-  // En product.service.ts
-findByBarcode(barcode: string): Observable<IProduct> {
-  return this.http.get<IProduct>(`${this.apiUrl}/barcode/${barcode}`).pipe(
-    catchError(err => {
-      console.error('Error buscando producto por código de barras:', err);
-      return throwError(() => new Error('No se encontró el producto'));
-    })
-  );
-}
+  findByBarcode(barcode: string): Observable<IProduct> {
+    return this.http.get<IApiResponse<IProduct>>(`${this.apiUrl}/barcode/${barcode}`).pipe(
+      map(response => {
+        if (!response.success || !response.data) {
+          throw new Error(response.message || 'No se encontró el producto');
+        }
+        return response.data;
+      }),
+      catchError(err => {
+        console.error('Error buscando producto por código de barras:', err);
+        return throwError(() => new Error('No se encontró el producto'));
+      })
+    );
+  }
 
 }

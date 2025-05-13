@@ -13,6 +13,7 @@ interface TransactionResponse {
 @Injectable({
   providedIn: 'root'
 })
+  
 export class TransactionService {
   private apiUrl = 'https://api-stock-app.onrender.com/api/transactions';
   
@@ -50,4 +51,21 @@ export class TransactionService {
       })
     );
   }
+
+    // Asumiendo que ya tienes imports de HttpClient, Observable, etc.
+
+  createTransaction(transaction: {
+    productId: string;
+    type: 'IN' | 'OUT';
+    userId: string;
+    quantity: number;
+  }): Observable<ITransaction> {
+    return this.http.post<ITransaction>(this.apiUrl, transaction).pipe(
+      catchError(error => {
+        console.error('Error creando transacción:', error);
+        return throwError(() => new Error('Error al registrar la transacción'));
+      })
+    );
+  }
+
 }
