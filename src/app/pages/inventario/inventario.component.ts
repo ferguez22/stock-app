@@ -79,9 +79,11 @@ export class InventarioComponent implements OnInit {
       )
       .subscribe({
         next: (products) => {
-          console.log('Productos recibidos:', products);
           this.products = products;
-          this.filteredProducts = [...products]; // Inicializar filteredProducts con todos los productos
+          this.filteredProducts = [...products];
+          
+          // Ahora que tenemos los productos, cargamos las estadísticas
+          this.loadInventoryStats();
         },
         error: (err) => {
           console.error('Error al cargar productos:', err);
@@ -98,11 +100,14 @@ export class InventarioComponent implements OnInit {
     
     this.productService.getInventoryStatus().subscribe({
       next: (data) => {
-        // Calcular totales
+        // Calcular totales para las estadísticas generales
         this.inventoryStats.totalProducts = data.length;
         this.inventoryStats.totalStock = data.reduce((sum: number, item: any) => sum + item.total, 0);
         this.inventoryStats.inStockTotal = data.reduce((sum: number, item: any) => sum + item.enAlmacen, 0);
         this.inventoryStats.outStockTotal = data.reduce((sum: number, item: any) => sum + item.fueraAlmacen, 0);
+        
+        // Importante: Actualizar los productos con la información de stock fuera de almacén
+        this.updateProductsWithOutStock(data);
         
         this.isLoadingStats = false;
       },
@@ -112,6 +117,28 @@ export class InventarioComponent implements OnInit {
         this.isLoadingStats = false;
       }
     });
+  }
+
+  // Nuevo método para actualizar los productos con la información de stock fuera
+  private updateProductsWithOutStock(inventoryData: any[]): void {
+    // Crear un mapa para acceso rápido por ID de producto
+    const inventoryMap = new Map();
+    inventoryData.forEach(item => {
+      inventoryMap.set(item._id, item);
+    });
+    
+    // Actualizar la propiedad outStock en los productos
+    this.products.forEach(product => {
+      const productInventory = inventoryMap.get(product._id);
+      if (productInventory) {
+        product.outStock = productInventory.fueraAlmacen || 0;
+      } else {
+        product.outStock = 0;
+      }
+    });
+    
+    // Actualizar también la lista filtrada
+    this.filteredProducts = [...this.products];
   }
 
   // Método para aplicar la búsqueda

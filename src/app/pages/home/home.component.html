@@ -36,15 +36,15 @@
             <div class="quick-actions-container mt-3">
                 <h5 class="actions-subtitle">Acciones Rápidas</h5>
                 <div class="quick-actions user-actions">
-                    <button class="btn btn-action-sm">
+                    <button class="btn btn-action-sm" (click)="createProduct()">
                         <i class="fas fa-plus-circle"></i>
                         <span>Nuevo Producto</span>
                     </button>
-                    <button class="btn btn-action-sm">
+                    <button class="btn btn-action-sm" (click)="scanProduct()">
                         <i class="fas fa-barcode"></i>
                         <span>Escanear</span>
                     </button>
-                    <button class="btn btn-action-sm">
+                    <button class="btn btn-action-sm" (click)="exportData()">
                         <i class="fas fa-file-export"></i>
                         <span>Exportar</span>
                     </button>
@@ -151,7 +151,7 @@
         <div class="dashboard-card transactions-card">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h3 class="card-title mb-0">Transacciones Recientes</h3>
-                <a [routerLink]="['/historial-transacciones']" class="btn btn-sm btn-link">
+                <a [routerLink]="['/historial']" class="btn btn-sm btn-link">
                     Ver todas
                 </a>
             </div>

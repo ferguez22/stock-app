@@ -124,6 +124,18 @@ onResize() {
     if (hour < 18) return 'Buenas tardes. ¡Espero que tu día esté siendo productivo!';
     return 'Buenas noches. ¡Es hora de revisar el inventario del día!';
   }
+
+  createProduct(): void {
+    this.router.navigate(['/inventario']);
+  }
+
+  scanProduct(): void {
+    this.router.navigate(['/escaner']);
+  }
+
+  exportData(): void {
+  this.router.navigate(['/codigos'])
+  }
   
   logout(): void {
     this.authService.logout();
