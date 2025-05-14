@@ -27,6 +27,14 @@ export class InventarioComponent implements OnInit {
   errorMessage = '';
   currentUser: IUser | null = null;
   userRole = 'user'; // Valor predeterminado
+  inventoryStats = {
+    totalProducts: 0,
+    totalStock: 0,
+    inStockTotal: 0, 
+    outStockTotal: 0
+  };
+  isLoadingStats = false;
+  statsError = false;
 
   constructor(
     private productService: ProductService,
@@ -37,6 +45,7 @@ export class InventarioComponent implements OnInit {
   ngOnInit(): void {
     this.loadUserData();
     this.loadProducts();
+    this.loadInventoryStats(); // Nueva llamada
   }
 
   private loadUserData(): void {
@@ -80,6 +89,29 @@ export class InventarioComponent implements OnInit {
           this.errorMessage = 'No se pudieron cargar los productos. Por favor, inténtalo de nuevo más tarde.';
         }
       });
+  }
+
+  // Nuevo método para cargar estadísticas
+  loadInventoryStats(): void {
+    this.isLoadingStats = true;
+    this.statsError = false;
+    
+    this.productService.getInventoryStatus().subscribe({
+      next: (data) => {
+        // Calcular totales
+        this.inventoryStats.totalProducts = data.length;
+        this.inventoryStats.totalStock = data.reduce((sum: number, item: any) => sum + item.total, 0);
+        this.inventoryStats.inStockTotal = data.reduce((sum: number, item: any) => sum + item.enAlmacen, 0);
+        this.inventoryStats.outStockTotal = data.reduce((sum: number, item: any) => sum + item.fueraAlmacen, 0);
+        
+        this.isLoadingStats = false;
+      },
+      error: (err) => {
+        console.error('Error cargando estadísticas:', err);
+        this.statsError = true;
+        this.isLoadingStats = false;
+      }
+    });
   }
 
   // Método para aplicar la búsqueda

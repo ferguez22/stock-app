@@ -31,6 +31,21 @@ export class ProductService {
   getById(id: string): Observable<IProduct> {
     return this.http.get<IProduct>(`${this.apiUrl}/${id}`);
   }
+
+  getInventoryStatus(): Observable<any[]> {
+    return this.http.get<IApiResponse<any[]>>(`${this.apiUrl}/product-status`).pipe(
+      map(response => {
+        if (!response.success || !response.data) {
+          throw new Error(response.message || 'Error al obtener estado del inventario');
+        }
+        return response.data;
+      }),
+      catchError(error => {
+        console.error('Error en getInventoryStatus:', error);
+        return throwError(() => error);
+      })
+    );
+  }
   
   create(product: IProduct): Observable<IProduct> {
     return this.http.post<IProduct>(this.apiUrl, product);

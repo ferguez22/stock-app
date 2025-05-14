@@ -25,6 +25,12 @@ export class EscanerComponent implements OnInit, AfterViewInit {
   error = false;
   errorMessage = '';
   scannedProduct: IProduct | null = null;
+  myOutProducts: any[] = [];
+  isLoadingOutProducts = false;
+  outProductsError = false;
+  othersOutProducts: any[] = [];
+  isLoadingOthersProducts = false;
+  othersProductsError = false;
 
   constructor(
     private productService: ProductService,
@@ -37,6 +43,46 @@ export class EscanerComponent implements OnInit, AfterViewInit {
     if (this.isMobileDevice()) {
       this.scannerMode = 'camera';
     }
+    
+    this.loadUserOutProducts();
+    this.loadOthersOutProducts(); // Cargar productos de otros usuarios
+  }
+
+  loadUserOutProducts(): void {
+    const userId = this.authService.getCurrentUserId();
+    if (!userId) return;
+    
+    this.isLoadingOutProducts = true;
+    this.outProductsError = false;
+    
+    this.transactionService.getUserOutProducts(userId).subscribe({
+      next: (data) => {
+        this.myOutProducts = data;
+        this.isLoadingOutProducts = false;
+      },
+      error: (err) => {
+        console.error('Error cargando productos fuera de almacén:', err);
+        this.outProductsError = true;
+        this.isLoadingOutProducts = false;
+      }
+    });
+  }
+
+  loadOthersOutProducts(): void {
+    this.isLoadingOthersProducts = true;
+    this.othersProductsError = false;
+    
+    this.transactionService.getOthersOutProducts().subscribe({
+      next: (data) => {
+        this.othersOutProducts = data;
+        this.isLoadingOthersProducts = false;
+      },
+      error: (err) => {
+        console.error('Error cargando productos de otros usuarios:', err);
+        this.othersProductsError = true;
+        this.isLoadingOthersProducts = false;
+      }
+    });
   }
 
   ngAfterViewInit() {
@@ -179,6 +225,8 @@ export class EscanerComponent implements OnInit, AfterViewInit {
 
             this.scannedCode = '';
             this.focusInput();
+            this.loadUserOutProducts();
+            this.loadOthersOutProducts();
           },
           error: (err) => {
             console.error('Error en la transacción:', err);
@@ -194,6 +242,6 @@ export class EscanerComponent implements OnInit, AfterViewInit {
   }
 
   isMobileDevice(): boolean {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    return /Android|webOS|iPhone|iPad/i.test(navigator.userAgent);
   }
 }

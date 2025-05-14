@@ -9,6 +9,65 @@
         }
     </div>
 
+        <!-- Agregar después del <h2> pero antes de la barra de búsqueda -->
+        <div class="stats-container mb-4">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <div class="stats-data">
+                            <h3>{{ inventoryStats.totalProducts }}</h3>
+                            <p>Productos diferentes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon">
+                            <i class="fas fa-cubes"></i>
+                        </div>
+                        <div class="stats-data">
+                            <h3>{{ inventoryStats.totalStock }}</h3>
+                            <p>Unidades totales</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon green-icon">
+                            <i class="fas fa-warehouse"></i>
+                        </div>
+                        <div class="stats-data">
+                            <h3>{{ inventoryStats.inStockTotal }}</h3>
+                            <p>En almacén</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon orange-icon">
+                            <i class="fas fa-dolly"></i>
+                        </div>
+                        <div class="stats-data">
+                            <h3>{{ inventoryStats.outStockTotal }}</h3>
+                            <p>Fuera de almacén</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estado de carga para las estadísticas -->
+        @if (isLoadingStats) {
+        <div class="text-center mb-3">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Cargando estadísticas...</span>
+            </div>
+            <span class="ms-2">Calculando estadísticas...</span>
+        </div>     }
+
     <!-- Barra de búsqueda -->
     <div class="search-container">
         <div class="input-group mb-3">

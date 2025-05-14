@@ -3,72 +3,56 @@
     flex-direction: column;
     height: 100%;
     padding: 20px;
-    overflow-y: auto;
+    overflow-y: auto; /* This already allows vertical scrolling */
     background-color: #f5f7fa;
     border-radius: 8px;
     box-sizing: border-box;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
-.header h2 {
-    font-weight: 600;
-    margin-bottom: 8px;
-}
-
-.scanner-area {
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    border: none;
-}
-
-.scanner-controls {
-    display: flex;
-    justify-content: center;
-}
-
-.scanner-placeholder {
-    min-height: 250px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    padding: 20px;
-}
-
-.scanner-toggle-btn {
-    min-width: 180px;
-}
-
-.card {
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+/* Ensure the container takes full height */
+:host {
+    display: block;
+    height: 100%;
     overflow: hidden;
 }
 
-.card-header {
+/* Enhanced scrolling for product lists */
+.out-products-list {
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin; /* For Firefox */
+    padding-right: 3px;
+    margin-right: -3px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+/* Scrollbar styling for webkit browsers */
+.out-products-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.out-products-list::-webkit-scrollbar-thumb {
+    background-color: #adb5bd;
+    border-radius: 3px;
+}
+
+.out-products-list::-webkit-scrollbar-track {
     background-color: #f8f9fa;
-    border-bottom: 1px solid #eaeaea;
-    padding: 12px 15px;
 }
 
-.card-header h4 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #333;
-}
-
-/* Ajuste para dispositivos móviles */
+/* Mobile adjustments to ensure scrolling works properly */
 @media (max-width: 768px) {
     .escaner-container {
         padding: 15px;
         padding-bottom: 80px;
-        /* Espacio para la navbar inferior */
-    }
-
-    .scanner-placeholder {
-        min-height: 200px;
+        height: calc(100vh - 80px); /* Use viewport height to ensure fullness */
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 }

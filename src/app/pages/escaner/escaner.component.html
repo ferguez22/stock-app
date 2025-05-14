@@ -18,6 +18,14 @@
                 </button>
             </div>
 
+            <!-- Agregar el mensaje de error aquí -->
+            @if (error) {
+            <div class="alert alert-danger mt-2 mb-3">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                {{ errorMessage }}
+            </div>  
+            }
+
             <div class="scanner-mode-toggle text-center mb-3">
                 <div class="btn-group" role="group">
                     <button class="btn" [class.btn-primary]="scannerMode === 'usb'"
@@ -44,7 +52,43 @@
             <h4 class="m-0">Tus productos fuera de almacén</h4>
         </div>
         <div class="card-body">
+            <!-- Estado de carga -->
+            @if (isLoadingOutProducts) {
+            <div class="text-center">
+                <div class="spinner-border text-primary spinner-border-sm" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p class="text-muted mt-2">Cargando productos...</p>
+            </div>
+            } @else if (outProductsError) {
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Error al cargar productos
+            </div>
+            } @else if (myOutProducts.length === 0) {
             <p class="text-muted text-center">No tienes productos fuera de almacén</p>
+            } @else {
+            <div class="out-products-list">
+                @for (item of myOutProducts; track $index) {
+                <div class="out-product-item d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
+                    <div class="product-info">
+                        <div class="product-name">{{ item.product.item }}</div>
+                        <div class="d-flex align-items-center">
+                            <small class="text-muted me-2">{{ item.product.code }}</small>
+                            <!-- Mostrar la fecha de salida -->
+                            @if (item.lastExitDate) {
+                            <small class="text-secondary">
+                                <i class="fas fa-clock me-1"></i>{{ item.lastExitDate | date:'dd/MM/yy HH:mm' }}
+                            </small>
+                            }
+                        </div>
+                    </div>
+                    <div class="quantity-badge">
+                        <span class="badge bg-primary">{{ item.quantityOut }}</span>
+                    </div>
+                </div>               }
+            </div>
+            }
         </div>
     </div>
 
@@ -54,7 +98,46 @@
             <h4 class="m-0">Productos fuera de almacén (otros usuarios)</h4>
         </div>
         <div class="card-body">
-            <p class="text-muted text-center">No hay productos fuera de almacén</p>
+            <!-- Estado de carga -->
+            @if (isLoadingOthersProducts) {
+            <div class="text-center">
+                <div class="spinner-border text-primary spinner-border-sm" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p class="text-muted mt-2">Cargando productos...</p>
+            </div>
+            } @else if (othersProductsError) {
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Error al cargar productos
+            </div>
+            } @else if (othersOutProducts.length === 0) {
+            <p class="text-muted text-center">No hay productos fuera de almacén de otros usuarios</p>
+            } @else {
+            <div class="out-products-list">
+                @for (item of othersOutProducts; track $index) {
+                <div class="out-product-item d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
+                    <div class="product-info">
+                        <div class="product-name">{{ item.product.item }}</div>
+                        <div class="d-flex align-items-center">
+                            <small class="text-muted me-2">{{ item.product.code }}</small>
+                            <small class="text-info me-2">
+                                <i class="fas fa-user me-1"></i>{{ item.user.name }}
+                            </small>
+                            @if (item.lastExitDate) {
+                            <small class="text-secondary">
+                                <i class="fas fa-clock me-1"></i>{{ item.lastExitDate | date:'dd/MM/yy HH:mm' }}
+                            </small>
+                            }
+                        </div>
+                    </div>
+                    <div class="quantity-badge">
+                        <span class="badge bg-primary">{{ item.quantityOut }}</span>
+                    </div>
+                </div>
+                }
+            </div>
+            }
         </div>
     </div>
 </div>

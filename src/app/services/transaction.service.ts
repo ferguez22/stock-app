@@ -52,8 +52,6 @@ export class TransactionService {
     );
   }
 
-    // Asumiendo que ya tienes imports de HttpClient, Observable, etc.
-
   createTransaction(transaction: {
     productId: string;
     type: 'IN' | 'OUT';
@@ -68,4 +66,33 @@ export class TransactionService {
     );
   }
 
+  getUserOutProducts(userId: string): Observable<any[]> {
+    return this.http.get<IApiResponse<any[]>>(`${this.apiUrl}/user/${userId}/out`).pipe(
+      map(response => {
+        if (!response.success || !response.data) {
+          return [];
+        }
+        return response.data;
+      }),
+      catchError(error => {
+        console.error('Error obteniendo productos fuera de almacén:', error);
+        return of([]);
+      })
+    );
+  }
+
+  getOthersOutProducts(): Observable<any[]> {
+    return this.http.get<IApiResponse<any[]>>(`${this.apiUrl}/others/out`).pipe(
+      map(response => {
+        if (!response.success || !response.data) {
+          return [];
+        }
+        return response.data;
+      }),
+      catchError(error => {
+        console.error('Error obteniendo productos de otros usuarios:', error);
+        return of([]);
+      })
+    );
+  }
 }
