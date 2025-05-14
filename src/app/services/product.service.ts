@@ -48,7 +48,18 @@ export class ProductService {
   }
   
   create(product: IProduct): Observable<IProduct> {
-    return this.http.post<IProduct>(this.apiUrl, product);
+    return this.http.post<IApiResponse<IProduct>>(this.apiUrl, product).pipe(
+      map(response => {
+        if (!response.success || !response.data) {
+          throw new Error(response.message || 'Error al crear el producto');
+        }
+        return response.data;
+      }),
+      catchError(error => {
+        console.error('Error en ProductService.create:', error);
+        return throwError(() => error);
+      })
+    );
   }
   
   update(id: string, product: IProduct): Observable<IProduct> {

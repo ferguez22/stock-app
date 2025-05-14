@@ -93,7 +93,6 @@ export class InventarioComponent implements OnInit {
       });
   }
 
-  // Nuevo método para cargar estadísticas
   loadInventoryStats(): void {
     this.isLoadingStats = true;
     this.statsError = false;
@@ -119,7 +118,6 @@ export class InventarioComponent implements OnInit {
     });
   }
 
-  // Nuevo método para actualizar los productos con la información de stock fuera
   private updateProductsWithOutStock(inventoryData: any[]): void {
     // Crear un mapa para acceso rápido por ID de producto
     const inventoryMap = new Map();
@@ -141,7 +139,6 @@ export class InventarioComponent implements OnInit {
     this.filteredProducts = [...this.products];
   }
 
-  // Método para aplicar la búsqueda
   applySearch(): void {
     if (!this.searchTerm.trim()) {
       this.filteredProducts = [...this.products];
@@ -156,7 +153,6 @@ export class InventarioComponent implements OnInit {
     );
   }
 
-  // Método para limpiar la búsqueda
   clearSearch(): void {
     this.searchTerm = '';
     this.filteredProducts = [...this.products];
@@ -174,6 +170,144 @@ export class InventarioComponent implements OnInit {
         </div>
       `,
       confirmButtonText: 'Cerrar'
+    });
+  }
+
+  handleNewProduct(): void {
+    if (this.userRole !== 'admin') {
+      Swal.fire('Acceso denegado', 'No tienes permisos para crear productos', 'error');
+      return;
+    }
+    
+    Swal.fire({
+      title: 'Nuevo producto',
+      html: `
+        <form id="newProductForm" class="text-start">
+          <div class="mb-3">
+            <label for="item" class="form-label">Nombre del producto*</label>
+            <input type="text" class="form-control" id="item" placeholder="Nombre del producto">
+          </div>
+          <div class="mb-3">
+            <label for="type" class="form-label">Tipo*</label>
+            <input type="text" class="form-control" id="type" placeholder="Tipo de producto">
+          </div>
+          <div class="mb-3">
+            <label for="code" class="form-label">Código (opcional)</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="code" placeholder="Código personalizado o automático">
+              <div class="form-text text-muted w-100">Si lo dejas vacío, se generará automáticamente.</div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="stock" class="form-label">Stock inicial*</label>
+            <input type="number" class="form-control" id="stock" placeholder="0" min="0" value="0">
+          </div>
+        </form>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Guardar',
+      cancelButtonText: 'Cancelar',
+      focusConfirm: false,
+      didOpen: () => {
+        // Establecer el foco en el primer campo
+        document.getElementById('item')?.focus();
+      },
+      preConfirm: () => {
+        // Recoger los valores del formulario
+        const itemEl = document.getElementById('item') as HTMLInputElement;
+        const typeEl = document.getElementById('type') as HTMLInputElement;
+        const codeEl = document.getElementById('code') as HTMLInputElement;
+        const stockEl = document.getElementById('stock') as HTMLInputElement;
+        
+        // Validación
+        if (!itemEl.value.trim()) {
+          Swal.showValidationMessage('El nombre del producto es obligatorio');
+          return false;
+        }
+        
+        if (!typeEl.value.trim()) {
+          Swal.showValidationMessage('El tipo de producto es obligatorio');
+          return false;
+        }
+        
+        // El código ahora es opcional, solo validamos si el usuario ingresó algo
+        const codeValue = codeEl.value.trim();
+        if (codeValue && this.isCodeDuplicate(codeValue)) {
+          Swal.showValidationMessage('Este código ya existe. Por favor, utiliza otro código o déjalo vacío para generación automática.');
+          return false;
+        }
+        
+        // Crear el objeto producto
+        const newProduct: any = {
+          item: itemEl.value.trim(),
+          type: typeEl.value.trim(),
+          stock: parseInt(stockEl.value) || 0
+        };
+        
+        // Solo añadir el código si el usuario lo proporcionó
+        if (codeValue) {
+          newProduct.code = codeValue;
+        }
+        
+        return newProduct;
+      }
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        this.createProduct(result.value);
+      }
+    });
+  }
+  
+  isCodeDuplicate(code: string): boolean {
+    return this.products.some(product => product.code === code);
+  }
+  
+  createProduct(productData: any): void {
+    Swal.fire({
+      title: 'Guardando...',
+      text: 'Creando nuevo producto',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+    
+    this.productService.create(productData).subscribe({
+      next: (newProduct) => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Producto creado',
+          html: `
+            <div class="text-center">
+              <p>El producto <strong>${newProduct.item}</strong> se ha creado correctamente</p>
+              <p class="mt-2">Código asignado: <span class="badge bg-secondary">${newProduct.code}</span></p>
+            </div>
+          `
+        });
+        
+        // Añadir el nuevo producto al inicio de la lista
+        this.products = [newProduct, ...this.products];
+        this.applySearch(); // Reaplica el filtro de búsqueda
+        
+        // Actualizar las estadísticas
+        this.loadInventoryStats();
+      },
+      error: (err) => {
+        console.error('Error creando producto:', err);
+        
+        let errorMsg = 'No se pudo crear el producto';
+        if (err.error?.message) {
+          errorMsg = err.error.message;
+        } else if (err.status === 409) {
+          errorMsg = 'Ya existe un producto con ese código';
+        }
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: errorMsg
+        });
+      }
     });
   }
 

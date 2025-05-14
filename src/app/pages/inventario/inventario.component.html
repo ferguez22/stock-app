@@ -3,7 +3,7 @@
         <h2>Inventario de Productos</h2>
         <!-- Solo mostrar botón de nuevo producto para admin -->
         @if (userRole === 'admin') {
-        <button class="btn btn-primary">
+        <button class="btn btn-primary" (click)="handleNewProduct()">
             <i class="fas fa-plus me-2"></i>Nuevo Producto
         </button>
         }
