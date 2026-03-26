@@ -1,17 +1,30 @@
+// Refleja la tabla 'products' de MariaDB
 export interface IProduct {
-  _id?: string;
-  type: string;
+  id?: number;              // AUTO_INCREMENT con MariaDB
+  category_id?: number;     // FK a la tabla categories
+  brand: string;
   item: string;
-  stock: number;      // Stock total en almacén
-  outStock?: number;  // Stock fuera del almacén
+  description?: string;
+  status: 'BUENO' | 'REGULAR' | 'MALO' | 'BAJA';
+  stock: number;
+  min_stock?: number;
+  price?: number;
   code: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  aisle?: string;
+  shelf?: string;
+  side?: string;
+  created_at?: string;      // MariaDB devuelve timestamps como string...
+  updated_at?: string;
 }
 
-// Interfaz para la respuesta del estado del producto
+// Respuesta del endpoint /products/product-status
+// Describe el estado de inventario de cada producto
 export interface IProductStatus {
-  inStock: number;
-  outStock: number;
-  totalStock: number;
+  id: number;               // ID del producto
+  item: string;             // Nombre del producto
+  code: string;             // Código de barras
+  stock: number;            // Stock registrado en la tabla products
+  in_stock: number;         // Unidades actualmente en almacén (calculado desde transacciones)
+  out_stock: number;        // Unidades fuera de almacén (calculado desde transacciones)
+  total: number;            // Total general
 }

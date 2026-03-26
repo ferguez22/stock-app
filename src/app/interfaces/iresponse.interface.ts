@@ -1,5 +1,3 @@
-import { IUser } from './iuser.interface';
-
 // Respuesta genérica de la API
 export interface IApiResponse<T> {
   success: boolean;
@@ -8,9 +6,16 @@ export interface IApiResponse<T> {
   error?: string;
 }
 
-// Respuesta específica para autenticación
+// Respuesta específica para el login
 export interface IAuthResponse {
+  success: boolean;
   message?: string;
   token: string;
-  user?: IUser;
+  user?: {
+    id: number;
+    name: string;
+    email: string;
+    role: 'admin' | 'user';
+    is_active: boolean;
+  };
 }
