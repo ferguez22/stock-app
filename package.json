@@ -22,7 +22,7 @@
     "@zxing/ngx-scanner": "^19.0.0",
     "bootstrap": "^5.3.5",
     "jsbarcode": "^3.11.6",
-    "jspdf": "^3.0.1",
+    "jspdf": "^4.2.1",
     "rxjs": "~7.8.0",
     "sweetalert2": "^11.19.1",
     "tslib": "^2.3.0",
