@@ -10,6 +10,7 @@ import { finalize } from 'rxjs/operators';
 import { ProductTableComponent } from '../../components/product-table/product-table.component';
 import { ProductDetailComponent } from '../../components/product-detail/product-detail.component';
 import { ProductFormComponent } from '../../components/product-form/product-form.component';
+
 import Swal from 'sweetalert2';
 
 @Component({
@@ -27,6 +28,7 @@ export class InventarioComponent implements OnInit {
   selectedProduct: IProduct | null = null;
   showProductDetail = false;
   showProductForm = false;
+  editingProduct: IProduct | null = null;
   sortBy: string = 'name-asc';
   isLoading = true;
   error = false;
@@ -188,28 +190,58 @@ export class InventarioComponent implements OnInit {
   }
 
   onProductSaved(productData: any): void {
-    this.productService.create(productData).subscribe({
-      next: (newProduct) => {
-        this.showProductForm = false;
-        this.products = [newProduct, ...this.products];
-        this.applySearch();
-        this.loadInventoryStats();
-        Swal.fire({
-          icon: 'success',
-          title: 'Producto creado',
-          text: `${newProduct.item} se ha creado correctamente`,
-          timer: 2000,
-          showConfirmButton: false
-        });
-      },
-      error: (err: any) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: err.error?.message || 'No se pudo crear el producto'
-        });
-      }
-    });
+    if (this.editingProduct) {
+      // Modo edición
+      this.productService.update(this.editingProduct.id!, productData).subscribe({
+        next: (updatedProduct) => {
+          this.showProductForm = false;
+          const index = this.products.findIndex(p => p.id === this.editingProduct!.id);
+          if (index !== -1) {
+            this.products[index] = updatedProduct;
+          }
+          this.editingProduct = null;
+          this.applySearch();
+          Swal.fire({
+            icon: 'success',
+            title: 'Producto actualizado',
+            text: `${updatedProduct.item} se ha actualizado correctamente`,
+            timer: 2000,
+            showConfirmButton: false
+          });
+        },
+        error: (err: any) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: err.error?.message || 'No se pudo actualizar el producto'
+          });
+        }
+      });
+    } else {
+      // Modo creación
+      this.productService.create(productData).subscribe({
+        next: (newProduct) => {
+          this.showProductForm = false;
+          this.products = [newProduct, ...this.products];
+          this.applySearch();
+          this.loadInventoryStats();
+          Swal.fire({
+            icon: 'success',
+            title: 'Producto creado',
+            text: `${newProduct.item} se ha creado correctamente`,
+            timer: 2000,
+            showConfirmButton: false
+          });
+        },
+        error: (err: any) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: err.error?.message || 'No se pudo crear el producto'
+          });
+        }
+      });
+    }
   }
   
   isCodeDuplicate(code: string): boolean {
@@ -270,14 +302,8 @@ export class InventarioComponent implements OnInit {
       Swal.fire('Acceso denegado', 'No tienes permisos para editar productos', 'error');
       return;
     }
-    
-    console.log('Editar producto:', product);
-    Swal.fire({
-      title: 'Editar producto',
-      text: 'Esta funcionalidad está en desarrollo',
-      icon: 'info',
-      confirmButtonText: 'OK'
-    });
+    this.editingProduct = product;
+    this.showProductForm = true;
   }
 
   handleDeleteProduct(product: IProduct): void {

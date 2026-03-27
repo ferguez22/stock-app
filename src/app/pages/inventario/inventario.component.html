@@ -168,7 +168,8 @@
     </app-product-detail>
 
     <!-- Modal formulario nuevo producto -->
-    <app-product-form [visible]="showProductForm" (close)="closeProductForm()" (save)="onProductSaved($event)">
+    <app-product-form [visible]="showProductForm" [product]="editingProduct" (close)="closeProductForm()"
+        (save)="onProductSaved($event)">
     </app-product-form>
 
 </div>

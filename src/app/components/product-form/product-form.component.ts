@@ -1,8 +1,9 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CategoryService } from '../../services/category.service';
 import { ICategory } from '../../interfaces/icategory.interface';
+import { IProduct } from '../../interfaces/iproduct.interface';
 
 @Component({
   selector: 'app-product-form',
@@ -12,8 +13,9 @@ import { ICategory } from '../../interfaces/icategory.interface';
   styleUrl: './product-form.component.css'
 })
     
-export class ProductFormComponent implements OnInit {
+export class ProductFormComponent implements OnInit, OnChanges {
   @Input() visible = false;
+  @Input() product: IProduct | null = null;
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<any>();
 
@@ -58,6 +60,28 @@ export class ProductFormComponent implements OnInit {
     });
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+        if ((changes['visible'] || changes['product']) && this.visible && this.productForm) {
+      if (this.product) {
+        this.productForm.patchValue({
+          brand: this.product.brand,
+          item: this.product.item,
+          category_id: this.product.category_id,
+          description: this.product.description || '',
+          status: this.product.status,
+          stock: this.product.stock,
+          min_stock: this.product.min_stock ?? 2,
+          price: this.product.price || null,
+          aisle: this.product.aisle || '',
+          shelf: this.product.shelf || '',
+          side: this.product.side || ''
+        });
+      } else {
+        this.productForm.reset({ status: 'BUENO', stock: 0, min_stock: 2 });
+      }
+    }
+  }
+
   onSubmit(): void {
     if (this.productForm.invalid) {
       Object.values(this.productForm.controls).forEach(c => c.markAsTouched());
@@ -69,7 +93,11 @@ export class ProductFormComponent implements OnInit {
     if (formData.price) formData.price = Number(formData.price);
     if (formData.min_stock) formData.min_stock = Number(formData.min_stock);
 
+    if (this.product?.id) {
+      formData.id = this.product.id;
+    }
     this.save.emit(formData);
+
   }
 
   onClose(): void {
