@@ -148,7 +148,7 @@ export class EscanerComponent implements OnInit, AfterViewInit {
         <div class="product-info text-start">
           <h4>${product.item}</h4>
           <p><strong>Código:</strong> ${product.code || 'N/A'}</p>
-          <p><strong>Tipo:</strong> ${product.type || 'No especificado'}</p>
+          <p><strong>Marca:</strong> ${product.brand || 'No especificado'}</p>
           <p><strong>Stock actual:</strong> <span class="${stockColor} fw-bold">${product.stock}</span></p>
         </div>
       `,
@@ -210,9 +210,9 @@ export class EscanerComponent implements OnInit, AfterViewInit {
 
         const userId = this.authService.getCurrentUserId()
 
-        this.transactionService.createTransaction({
-          productId: product._id!,
-          userId: userId!,
+        this.transactionService.create({
+          product_id: product.id!,
+          user_id: userId!,
           type: transactionType,
           quantity: quantity
         }).subscribe({
@@ -228,7 +228,7 @@ export class EscanerComponent implements OnInit, AfterViewInit {
             this.loadUserOutProducts();
             this.loadOthersOutProducts();
           },
-          error: (err) => {
+          error: (err: any) => {
             console.error('Error en la transacción:', err);
             Swal.fire({
               icon: 'error',

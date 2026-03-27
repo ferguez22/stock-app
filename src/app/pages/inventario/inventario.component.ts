@@ -104,10 +104,6 @@ export class InventarioComponent implements OnInit {
         this.inventoryStats.totalStock = data.reduce((sum: number, item: any) => sum + item.total, 0);
         this.inventoryStats.inStockTotal = data.reduce((sum: number, item: any) => sum + item.enAlmacen, 0);
         this.inventoryStats.outStockTotal = data.reduce((sum: number, item: any) => sum + item.fueraAlmacen, 0);
-        
-        // Importante: Actualizar los productos con la información de stock fuera de almacén
-        this.updateProductsWithOutStock(data);
-        
         this.isLoadingStats = false;
       },
       error: (err) => {
@@ -116,27 +112,6 @@ export class InventarioComponent implements OnInit {
         this.isLoadingStats = false;
       }
     });
-  }
-
-  private updateProductsWithOutStock(inventoryData: any[]): void {
-    // Crear un mapa para acceso rápido por ID de producto
-    const inventoryMap = new Map();
-    inventoryData.forEach(item => {
-      inventoryMap.set(item._id, item);
-    });
-    
-    // Actualizar la propiedad outStock en los productos
-    this.products.forEach(product => {
-      const productInventory = inventoryMap.get(product._id);
-      if (productInventory) {
-        product.outStock = productInventory.fueraAlmacen || 0;
-      } else {
-        product.outStock = 0;
-      }
-    });
-    
-    // Actualizar también la lista filtrada
-    this.filteredProducts = [...this.products];
   }
 
   applySearch(): void {
@@ -149,7 +124,7 @@ export class InventarioComponent implements OnInit {
     this.filteredProducts = this.products.filter(product => 
       (product.item && product.item.toLowerCase().includes(term)) || 
       (product.code && product.code.toLowerCase().includes(term)) ||
-      (product.type && product.type.toLowerCase().includes(term))
+      (product.brand && product.brand.toLowerCase().includes(term))
     );
   }
 
@@ -163,10 +138,10 @@ export class InventarioComponent implements OnInit {
       title: product.item,
       html: `
         <div class="text-start">
-          <p><strong>Tipo:</strong> ${product.type}</p>
+          <p><strong>Tipo:</strong> ${product.brand}</p>
           <p><strong>Código:</strong> ${product.code || 'N/A'}</p>
           <p><strong>Stock:</strong> ${product.stock}</p>
-          <p><strong>Actualizado:</strong> ${product.updatedAt ? new Date(product.updatedAt).toLocaleDateString() : 'N/A'}</p>
+          <p><strong>Actualizado:</strong> ${product.updated_at ? new Date(product.updated_at).toLocaleDateString() : 'N/A'}</p>
         </div>
       `,
       confirmButtonText: 'Cerrar'
@@ -215,7 +190,7 @@ export class InventarioComponent implements OnInit {
       preConfirm: () => {
         // Recoger los valores del formulario
         const itemEl = document.getElementById('item') as HTMLInputElement;
-        const typeEl = document.getElementById('type') as HTMLInputElement;
+        const brandEl = document.getElementById('brand') as HTMLInputElement;
         const codeEl = document.getElementById('code') as HTMLInputElement;
         const stockEl = document.getElementById('stock') as HTMLInputElement;
         
@@ -225,7 +200,7 @@ export class InventarioComponent implements OnInit {
           return false;
         }
         
-        if (!typeEl.value.trim()) {
+        if (!brandEl.value.trim()) {
           Swal.showValidationMessage('El tipo de producto es obligatorio');
           return false;
         }
@@ -240,7 +215,7 @@ export class InventarioComponent implements OnInit {
         // Crear el objeto producto
         const newProduct: any = {
           item: itemEl.value.trim(),
-          type: typeEl.value.trim(),
+          brand: brandEl.value.trim(),
           stock: parseInt(stockEl.value) || 0
         };
         
@@ -343,9 +318,9 @@ export class InventarioComponent implements OnInit {
       confirmButtonColor: '#dc3545'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.productService.delete(product._id as string).subscribe({
+        this.productService.delete(product.id!).subscribe({
           next: () => {
-            this.products = this.products.filter(p => p._id !== product._id);
+            this.products = this.products.filter(p => p.id !== product.id);
             
             Swal.fire(
               '¡Eliminado!',

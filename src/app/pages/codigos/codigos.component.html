@@ -41,15 +41,15 @@
 
     <!-- Grid de productos adaptable -->
     <div class="products-grid">
-        @for (product of filteredProducts; track product._id) {
+        @for (product of filteredProducts; track product.id) {
         <!-- El resto del código de las tarjetas se mantiene igual -->
-        <div class="product-card" [class.selected]="isSelected(product._id || '')"
-            (click)="toggleSelection(product._id || '')">
+        <div class="product-card" [class.selected]="isSelected('' + (product.id))"
+            (click)="toggleSelection('' + (product.id))">
             <!-- ... contenido existente de cada tarjeta ... -->
             <div class="product-header">
                 <div class="product-status">
-                    <span class="status-indicator" [class.selected]="isSelected(product._id || '')"></span>
-                    <span class="status-text">{{ isSelected(product._id || '') ? 'Seleccionado' : '' }}</span>
+                    <span class="status-indicator" [class.selected]="isSelected('' + (product.id))"></span>
+                    <span class="status-text">{{ isSelected('' + (product.id)) ? 'Seleccionado' : '' }}</span>
                 </div>
                 <div class="product-code">{{ product.code }}</div>
             </div>
@@ -57,20 +57,20 @@
             <div class="product-name">{{ product.item }}</div>
 
             <div class="barcode-container">
-                <img [src]="barcodePreviews[product._id || '']" alt="Código de barras" />
+                <img [src]="barcodePreviews[product.id || '']" alt="Código de barras" />
             </div>
 
-            @if (isSelected(product._id || '')) {
+            @if (isSelected('' + (product.id))) {
             <div class="quantity-control">
-                <label for="qty-{{product._id}}"></label>
+                <label for="qty-{{product.id}}"></label>
                 <div class="quantity-selector">
                     <button class="quantity-btn"
-                        (click)="decrementQuantity(product._id || ''); $event.stopPropagation()">
+                        (click)="decrementQuantity('' + (product.id)); $event.stopPropagation()">
                         <i class="fas fa-minus"></i>
                     </button>
-                    <span class="quantity-value">{{ selectedProducts[product._id || ''] }}</span>
+                    <span class="quantity-value">{{ selectedProducts['' + (product.id)] }}</span>
                     <button class="quantity-btn"
-                        (click)="incrementQuantity(product._id || ''); $event.stopPropagation()">
+                        (click)="incrementQuantity('' + (product.id)); $event.stopPropagation()">
                         <i class="fas fa-plus"></i>
                     </button>
                 </div>

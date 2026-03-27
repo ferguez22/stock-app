@@ -71,7 +71,7 @@
                     @if (filteredTransactions.length > 0) {
                     @for (transaction of filteredTransactions; track $index) {
                     <tr>
-                        <td>{{ transaction.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                        <td>{{ transaction.created_at | date:'dd/MM/yyyy HH:mm' }}</td>
                         <td>
                             <span class="badge" [ngClass]="getTypeClass(transaction.type)">
                                 <i class="fas" [ngClass]="getTypeIcon(transaction.type)"></i>
@@ -115,7 +115,7 @@
                         <i class="fas" [ngClass]="getTypeIcon(transaction.type)"></i>
                         {{ getTypeText(transaction.type) }}
                     </span>
-                    <span class="transaction-date">{{ transaction.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                    <span class="transaction-date">{{ transaction.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
                 </div>
 
                 <div class="transaction-product">

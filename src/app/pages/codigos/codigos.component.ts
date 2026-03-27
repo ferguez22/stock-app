@@ -41,8 +41,8 @@ export class CodigosComponent implements OnInit {
         
         // Generar todos los códigos de barras al cargar
         this.products.forEach(product => {
-          if (product._id && product.code) {
-            this.generateBarcodePreview(product._id, product.code);
+          if (product.id && product.code) {
+            this.generateBarcodePreview(String(product.id), product.code);
           }
         });
         this.isLoading = false;
@@ -62,7 +62,7 @@ export class CodigosComponent implements OnInit {
       event.stopPropagation();
     }
 
-    const product = this.products.find(p => p._id === productId);
+    const product = this.products.find(p => String(p.id) === productId);
     
     if (!this.selectedProducts[productId]) {
       this.selectedProducts[productId] = 1; // Mínimo de 1 código por producto
@@ -97,13 +97,13 @@ export class CodigosComponent implements OnInit {
 
   totalBarcodeCount(products: IProduct[], selectedProducts: {[key: string]: number}): number {
     return products.reduce((total, product) => {
-      return total + (selectedProducts[product._id || ''] || 0);
+      return total + (selectedProducts[product.id || ''] || 0);
     }, 0);
   }
 
   generatePDF(): void {
   const selectedProducts = this.products.filter(product =>
-    this.selectedProducts[product._id || '']
+    this.selectedProducts[product.id || '']
   );
 
     if (selectedProducts.length === 0) {
@@ -139,7 +139,7 @@ export class CodigosComponent implements OnInit {
     let currentItemCount = 0;
 
     selectedProducts.forEach((product) => {
-      const quantity = this.selectedProducts[product._id || ''];
+      const quantity = this.selectedProducts[String(product.id || '')];
       
       for (let i = 0; i < quantity; i++) {
         const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");

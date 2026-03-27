@@ -3,7 +3,7 @@
         <thead class="table-light">
             <tr>
                 <th>Código</th>
-                <th>Tipo</th>
+                <th>Marca</th>
                 <th>Producto</th>
                 <th class="text-center">Stock</th>
                 <th>Acciones</th>
@@ -13,7 +13,7 @@
             @for (product of products; track product) {
             <tr>
                 <td><span class="badge bg-secondary">{{ product.code || 'N/A' }}</span>
-                <td>{{ product.type }}</td>
+                <td>{{ product.brand }}</td>
                 <td>{{ product.item }}</td>
                 <td class="text-center">
                     <div class="stock-info">
@@ -24,13 +24,6 @@
                                 'bg-success': product.stock > 5
                             }">{{ product.stock }}</span>
                         </div>
-
-                        @if (product.outStock && product.outStock > 0) {
-                        <div class="stock-out">
-                            <span class="badge bg-secondary">{{ product.outStock }}</span>
-                            <small class="d-block mt-1">Fuera</small>
-                        </div>
-                        }
                     </div>
                 </td>
                 <td>

@@ -96,7 +96,7 @@ export class HistorialTransaccionesComponent implements OnInit {
       const term = this.searchTerm.toLowerCase().trim();
       filtered = filtered.filter(t => 
         (t.product?.item?.toLowerCase().includes(term)) || 
-        (t.product?.type?.toLowerCase().includes(term)) ||
+        (t.product?.brand?.toLowerCase().includes(term)) ||
         (t.user?.name?.toLowerCase().includes(term))
       );
     }

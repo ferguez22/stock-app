@@ -33,9 +33,9 @@
                 {{ currentUser.role }}
             </p>
 
-            @if (currentUser.createdAt) {
+            @if (currentUser.created_at) {
             <div class="text-muted small mt-3">
-                <p class="mb-0">Miembro desde: {{ currentUser.createdAt | date:'mediumDate' }}</p>
+                <p class="mb-0">Miembro desde: {{ currentUser.created_at | date:'mediumDate' }}</p>
             </div>
             }
 
