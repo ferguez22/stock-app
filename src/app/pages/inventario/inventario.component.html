@@ -126,47 +126,6 @@
         </app-product-table>
     </div>
 
-    <!-- Vista móvil (grid) -->
-    <!-- <div class="mobile-view" [hidden]="isLoading || error || filteredProducts.length === 0">
-        <div class="products-grid">
-            @for (product of filteredProducts; track product.id) {
-            <div class="product-card">
-                <div class="product-header">
-                    <span class="product-title">{{ product.item }}</span>
-                    <span class="product-code">{{ product.code }}</span>
-                </div>
-                <div class="product-details">
-                    <div class="detail-row">
-                        <span class="detail-label">Stock:</span>
-                        <span class="detail-value">{{ product.stock }}</span>
-                    </div>
-                <div class="detail-row">
-                    <span class="detail-label">Marca:</span>
-                    <span class="detail-value">{{ product.brand }}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Categoría:</span>
-                    <span class="detail-value">{{ product.category_name }}</span>
-                </div>
-                </div>
-                <div class="product-actions">
-                    <button class="btn btn-sm btn-info" (click)="handleViewProduct(product)">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    @if (userRole === 'admin') {
-                    <button class="btn btn-sm btn-primary" (click)="handleEditProduct(product)">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger" (click)="handleDeleteProduct(product)">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    }
-                </div>
-            </div>
-            }
-        </div>
-    </div> -->
-
     <!-- Vista móvil (lista compacta) -->
     <div class="mobile-view" [hidden]="isLoading || error || filteredProducts.length === 0">
         <div class="products-list">
@@ -207,5 +166,9 @@
     <!-- Modal detalle de producto -->
     <app-product-detail [product]="selectedProduct" [visible]="showProductDetail" (close)="closeProductDetail()">
     </app-product-detail>
+
+    <!-- Modal formulario nuevo producto -->
+    <app-product-form [visible]="showProductForm" (close)="closeProductForm()" (save)="onProductSaved($event)">
+    </app-product-form>
 
 </div>

@@ -9,13 +9,13 @@ import { IUser } from '../../interfaces/iuser.interface';
 import { finalize } from 'rxjs/operators';
 import { ProductTableComponent } from '../../components/product-table/product-table.component';
 import { ProductDetailComponent } from '../../components/product-detail/product-detail.component';
+import { ProductFormComponent } from '../../components/product-form/product-form.component';
 import Swal from 'sweetalert2';
-
 
 @Component({
   selector: 'app-inventario',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductTableComponent, ProductDetailComponent], // Añadir FormsModule
+  imports: [CommonModule, FormsModule, ProductTableComponent, ProductDetailComponent, ProductFormComponent], // Añadir FormsModule
   templateUrl: './inventario.component.html',
   styleUrl: './inventario.component.css'
 })
@@ -26,6 +26,7 @@ export class InventarioComponent implements OnInit {
   searchTerm: string = ''; // Término de búsqueda
   selectedProduct: IProduct | null = null;
   showProductDetail = false;
+  showProductForm = false;
   sortBy: string = 'name-asc';
   isLoading = true;
   error = false;
@@ -179,82 +180,34 @@ export class InventarioComponent implements OnInit {
       Swal.fire('Acceso denegado', 'No tienes permisos para crear productos', 'error');
       return;
     }
-    
-    Swal.fire({
-      title: 'Nuevo producto',
-      html: `
-        <form id="newProductForm" class="text-start">
-          <div class="mb-3">
-            <label for="item" class="form-label">Nombre del producto*</label>
-            <input type="text" class="form-control" id="item" placeholder="Nombre del producto">
-          </div>
-          <div class="mb-3">
-            <label for="type" class="form-label">Tipo*</label>
-            <input type="text" class="form-control" id="type" placeholder="Tipo de producto">
-          </div>
-          <div class="mb-3">
-            <label for="code" class="form-label">Código (opcional)</label>
-            <div class="input-group">
-              <input type="text" class="form-control" id="code" placeholder="Código personalizado o automático">
-              <div class="form-text text-muted w-100">Si lo dejas vacío, se generará automáticamente.</div>
-            </div>
-          </div>
-          <div class="mb-3">
-            <label for="stock" class="form-label">Stock inicial*</label>
-            <input type="number" class="form-control" id="stock" placeholder="0" min="0" value="0">
-          </div>
-        </form>
-      `,
-      showCancelButton: true,
-      confirmButtonText: 'Guardar',
-      cancelButtonText: 'Cancelar',
-      focusConfirm: false,
-      didOpen: () => {
-        // Establecer el foco en el primer campo
-        document.getElementById('item')?.focus();
+    this.showProductForm = true;
+  }
+
+  closeProductForm(): void {
+    this.showProductForm = false;
+  }
+
+  onProductSaved(productData: any): void {
+    this.productService.create(productData).subscribe({
+      next: (newProduct) => {
+        this.showProductForm = false;
+        this.products = [newProduct, ...this.products];
+        this.applySearch();
+        this.loadInventoryStats();
+        Swal.fire({
+          icon: 'success',
+          title: 'Producto creado',
+          text: `${newProduct.item} se ha creado correctamente`,
+          timer: 2000,
+          showConfirmButton: false
+        });
       },
-      preConfirm: () => {
-        // Recoger los valores del formulario
-        const itemEl = document.getElementById('item') as HTMLInputElement;
-        const brandEl = document.getElementById('brand') as HTMLInputElement;
-        const codeEl = document.getElementById('code') as HTMLInputElement;
-        const stockEl = document.getElementById('stock') as HTMLInputElement;
-        
-        // Validación
-        if (!itemEl.value.trim()) {
-          Swal.showValidationMessage('El nombre del producto es obligatorio');
-          return false;
-        }
-        
-        if (!brandEl.value.trim()) {
-          Swal.showValidationMessage('El tipo de producto es obligatorio');
-          return false;
-        }
-        
-        // El código ahora es opcional, solo validamos si el usuario ingresó algo
-        const codeValue = codeEl.value.trim();
-        if (codeValue && this.isCodeDuplicate(codeValue)) {
-          Swal.showValidationMessage('Este código ya existe. Por favor, utiliza otro código o déjalo vacío para generación automática.');
-          return false;
-        }
-        
-        // Crear el objeto producto
-        const newProduct: any = {
-          item: itemEl.value.trim(),
-          brand: brandEl.value.trim(),
-          stock: parseInt(stockEl.value) || 0
-        };
-        
-        // Solo añadir el código si el usuario lo proporcionó
-        if (codeValue) {
-          newProduct.code = codeValue;
-        }
-        
-        return newProduct;
-      }
-    }).then((result) => {
-      if (result.isConfirmed && result.value) {
-        this.createProduct(result.value);
+      error: (err: any) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: err.error?.message || 'No se pudo crear el producto'
+        });
       }
     });
   }
