@@ -13,7 +13,7 @@ import { TokenService } from './token.service';
 })
   
 export class AuthService {
-  private authUrl = `${environment.apiUrl}/auth`;
+  private authUrl = `${environment.apiUrl}/users`;
   private usersUrl = `${environment.apiUrl}/users`;
   private readonly USER_ID_KEY = 'user_id';
 

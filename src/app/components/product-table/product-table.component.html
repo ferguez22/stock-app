@@ -4,6 +4,7 @@
             <tr>
                 <th>Código</th>
                 <th>Marca</th>
+                <th>Categoría</th>
                 <th>Producto</th>
                 <th class="text-center">Stock</th>
                 <th>Acciones</th>
@@ -14,6 +15,7 @@
             <tr>
                 <td><span class="badge bg-secondary">{{ product.code || 'N/A' }}</span>
                 <td>{{ product.brand }}</td>
+                <td><span class="badge bg-info">{{ product.category_name }}</span></td>
                 <td>{{ product.item }}</td>
                 <td class="text-center">
                     <div class="stock-info">

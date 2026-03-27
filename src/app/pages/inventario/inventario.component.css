@@ -75,31 +75,31 @@
     width: 100%;
 }
 
-/* Estilos para la vista de grid en mobile */
-.products-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    /* 3 elementos por fila */
-    gap: 12px;
+/* Vista móvil - Lista compacta */
+.products-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     width: 100%;
 }
 
-.product-card {
+.product-list-item {
     background-color: white;
     border-radius: 8px;
-    padding: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px 14px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
 }
 
-.product-header {
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
-    margin-bottom: 8px;
+.product-list-info {
+    flex: 1;
+    min-width: 0;
 }
 
-.product-title {
+.product-list-name {
     font-weight: 600;
     font-size: 0.9rem;
     display: block;
@@ -108,42 +108,40 @@
     text-overflow: ellipsis;
 }
 
-.product-code {
-    background-color: #f1f1f1;
-    color: #666;
-    padding: 2px 5px;
-    border-radius: 3px;
+.product-list-meta {
+    display: flex;
+    gap: 8px;
+    margin-top: 2px;
+}
+
+.product-list-brand {
     font-size: 0.75rem;
-    font-family: monospace;
-    display: inline-block;
-    margin-top: 4px;
+    color: #666;
 }
 
-.product-details {
-    flex-grow: 1;
-    font-size: 0.8rem;
+.product-list-category {
+    font-size: 0.75rem;
+    color: #fff;
+    background-color: #0dcaf0;
+    padding: 0 6px;
+    border-radius: 4px;
 }
 
-.detail-row {
+.product-list-right {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 4px;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
 }
 
-.detail-label {
-    font-weight: 500;
-    color: #555;
-}
-
-.product-actions {
+.product-list-actions {
     display: flex;
-    justify-content: space-around;
-    margin-top: 10px;
-    gap: 5px;
+    gap: 4px;
 }
 
-.product-actions .btn {
-    padding: 0.25rem 0.5rem;
+.product-list-actions .btn {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.75rem;
 }
 
 /* Media queries para responsive */
@@ -266,6 +264,29 @@
     color: #6c757d;
     font-size: 0.9rem;
 }
+
+
+/* Filtros de ordenación */
+.sort-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.sort-label {
+    font-size: 0.85rem;
+    color: #555;
+    white-space: nowrap;
+    margin: 0;
+}
+
+.sort-select {
+    max-width: 220px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
 
 /* Ajustes para móviles */
 @media (max-width: 768px) {

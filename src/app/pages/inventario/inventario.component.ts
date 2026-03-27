@@ -22,6 +22,7 @@ export class InventarioComponent implements OnInit {
   products: IProduct[] = [];
   filteredProducts: IProduct[] = []; // Nueva propiedad para productos filtrados
   searchTerm: string = ''; // Término de búsqueda
+  sortBy: string = 'name-asc';
   isLoading = true;
   error = false;
   errorMessage = '';
@@ -115,18 +116,43 @@ export class InventarioComponent implements OnInit {
   }
 
   applySearch(): void {
-    if (!this.searchTerm.trim()) {
-      this.filteredProducts = [...this.products];
-      return;
-    }
+      let filtered = [...this.products];
 
-    const term = this.searchTerm.toLowerCase().trim();
-    this.filteredProducts = this.products.filter(product => 
-      (product.item && product.item.toLowerCase().includes(term)) || 
-      (product.code && product.code.toLowerCase().includes(term)) ||
-      (product.brand && product.brand.toLowerCase().includes(term))
-    );
-  }
+      // Filtrar por búsqueda
+      if (this.searchTerm.trim()) {
+        const term = this.searchTerm.toLowerCase().trim();
+        filtered = filtered.filter(product =>
+          (product.item && product.item.toLowerCase().includes(term)) ||
+          (product.code && product.code.toLowerCase().includes(term)) ||
+          (product.brand && product.brand.toLowerCase().includes(term)) ||
+          (product.category_name && product.category_name.toLowerCase().includes(term))
+        );
+      }
+
+      // Ordenar
+      filtered.sort((a, b) => {
+        switch (this.sortBy) {
+          case 'name-asc':
+            return (a.item || '').localeCompare(b.item || '');
+          case 'name-desc':
+            return (b.item || '').localeCompare(a.item || '');
+          case 'category-asc':
+            return (a.category_name || '').localeCompare(b.category_name || '');
+          case 'stock-asc':
+            return (a.stock || 0) - (b.stock || 0);
+          case 'stock-desc':
+            return (b.stock || 0) - (a.stock || 0);
+          case 'date-newest':
+            return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+          case 'date-oldest':
+            return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();
+          default:
+            return 0;
+        }
+      });
+
+      this.filteredProducts = filtered;
+    }
 
   clearSearch(): void {
     this.searchTerm = '';

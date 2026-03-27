@@ -13,6 +13,7 @@ export interface IProduct {
   aisle?: string;
   shelf?: string;
   side?: string;
+  category_name?: string;   // Viene del JOIN con categories (no está en la tabla, lo añade la API OJOOO)
   created_at?: string;      // MariaDB devuelve timestamps como string...
   updated_at?: string;
 }
