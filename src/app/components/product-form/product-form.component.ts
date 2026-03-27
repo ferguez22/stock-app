@@ -12,7 +12,7 @@ import { IProduct } from '../../interfaces/iproduct.interface';
   templateUrl: './product-form.component.html',
   styleUrl: './product-form.component.css'
 })
-    
+
 export class ProductFormComponent implements OnInit, OnChanges {
   @Input() visible = false;
   @Input() product: IProduct | null = null;

@@ -95,7 +95,11 @@
                 </div>
                 <div class="form-field">
                     <label>Lado</label>
-                    <input type="text" formControlName="side" placeholder="Ej: IZQ">
+                    <select formControlName="side">
+                        <option value="">Sin definir</option>
+                        <option value="IZQ">Izquierda</option>
+                        <option value="DER">Derecha</option>
+                    </select>
                 </div>
             </div>
 

@@ -153,7 +153,11 @@ export class InventarioComponent implements OnInit {
           case 'date-newest':
             return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
           case 'date-oldest':
-            return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();
+          return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();
+          case 'updated-newest':
+            return new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime();
+          case 'updated-oldest':
+            return new Date(a.updated_at || 0).getTime() - new Date(b.updated_at || 0).getTime();
           default:
             return 0;
         }
@@ -182,6 +186,7 @@ export class InventarioComponent implements OnInit {
       Swal.fire('Acceso denegado', 'No tienes permisos para crear productos', 'error');
       return;
     }
+    this.editingProduct = null;
     this.showProductForm = true;
   }
 
@@ -197,7 +202,10 @@ export class InventarioComponent implements OnInit {
           this.showProductForm = false;
           const index = this.products.findIndex(p => p.id === this.editingProduct!.id);
           if (index !== -1) {
-            this.products[index] = updatedProduct;
+            const selectedCategory = this.editingProduct!.category_id === updatedProduct.category_id
+              ? this.editingProduct!.category_name
+              : this.products[index].category_name;
+            this.products[index] = { ...updatedProduct, category_name: updatedProduct.category_name || selectedCategory };
           }
           this.editingProduct = null;
           this.applySearch();
@@ -307,12 +315,11 @@ export class InventarioComponent implements OnInit {
   }
 
   handleDeleteProduct(product: IProduct): void {
-    // Verificar que el usuario es admin
     if (this.userRole !== 'admin') {
       Swal.fire('Acceso denegado', 'No tienes permisos para eliminar productos', 'error');
       return;
     }
-    
+
     Swal.fire({
       title: '¿Eliminar producto?',
       text: `¿Estás seguro de eliminar "${product.item}"? Esta acción no se puede deshacer.`,
@@ -326,20 +333,22 @@ export class InventarioComponent implements OnInit {
         this.productService.delete(product.id!).subscribe({
           next: () => {
             this.products = this.products.filter(p => p.id !== product.id);
-            
-            Swal.fire(
-              '¡Eliminado!',
-              'El producto ha sido eliminado correctamente',
-              'success'
-            );
+            this.applySearch();
+            this.loadInventoryStats();
+            Swal.fire({
+              icon: 'success',
+              title: '¡Eliminado!',
+              text: `${product.item} ha sido eliminado correctamente`,
+              timer: 2000,
+              showConfirmButton: false
+            });
           },
-          error: (err) => {
-            console.error('Error eliminando producto:', err);
-            Swal.fire(
-              'Error',
-              'No se pudo eliminar el producto',
-              'error'
-            );
+          error: (err: any) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: err.error?.message || 'No se pudo eliminar el producto'
+            });
           }
         });
       }
