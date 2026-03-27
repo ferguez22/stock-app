@@ -8,20 +8,24 @@ import { IProduct } from '../../interfaces/iproduct.interface';
 import { IUser } from '../../interfaces/iuser.interface';
 import { finalize } from 'rxjs/operators';
 import { ProductTableComponent } from '../../components/product-table/product-table.component';
+import { ProductDetailComponent } from '../../components/product-detail/product-detail.component';
 import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-inventario',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductTableComponent], // Añadir FormsModule
+  imports: [CommonModule, FormsModule, ProductTableComponent, ProductDetailComponent], // Añadir FormsModule
   templateUrl: './inventario.component.html',
   styleUrl: './inventario.component.css'
 })
   
 export class InventarioComponent implements OnInit {
   products: IProduct[] = [];
-  filteredProducts: IProduct[] = []; // Nueva propiedad para productos filtrados
+  filteredProducts: IProduct[] = []; // para productos filtrados
   searchTerm: string = ''; // Término de búsqueda
+  selectedProduct: IProduct | null = null;
+  showProductDetail = false;
   sortBy: string = 'name-asc';
   isLoading = true;
   error = false;
@@ -34,6 +38,7 @@ export class InventarioComponent implements OnInit {
     inStockTotal: 0, 
     outStockTotal: 0
   };
+
   isLoadingStats = false;
   statsError = false;
 
@@ -160,18 +165,13 @@ export class InventarioComponent implements OnInit {
   }
 
   handleViewProduct(product: IProduct): void {
-    Swal.fire({
-      title: product.item,
-      html: `
-        <div class="text-start">
-          <p><strong>Tipo:</strong> ${product.brand}</p>
-          <p><strong>Código:</strong> ${product.code || 'N/A'}</p>
-          <p><strong>Stock:</strong> ${product.stock}</p>
-          <p><strong>Actualizado:</strong> ${product.updated_at ? new Date(product.updated_at).toLocaleDateString() : 'N/A'}</p>
-        </div>
-      `,
-      confirmButtonText: 'Cerrar'
-    });
+    this.selectedProduct = product;
+    this.showProductDetail = true;
+  }
+
+  closeProductDetail(): void {
+    this.showProductDetail = false;
+    this.selectedProduct = null;
   }
 
   handleNewProduct(): void {

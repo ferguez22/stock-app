@@ -1,0 +1,78 @@
+@if (visible && product) {
+    
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+    <div class="modal-panel">
+
+        <!-- Cabecera -->
+        <div class="modal-header">
+            <h3 class="modal-title">{{ product.item }}</h3>
+            <button class="btn-close" (click)="onClose()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Badges -->
+        <div class="modal-badges">
+            <span class="badge-status" [style.background]="getStatusColor()">{{ product.status }}</span>
+            <span class="badge-category">{{ product.category_name || 'Sin categoría' }}</span>
+        </div>
+
+        <!-- Información principal -->
+        <div class="modal-body">
+            <div class="info-row">
+                <span class="info-label">Marca</span>
+                <span class="info-value">{{ product.brand }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Descripción</span>
+                <span class="info-value">{{ product.description || 'Sin descripción' }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Código</span>
+                <span class="info-value code">{{ product.code || 'Sin código asignado' }}</span>
+            </div>
+
+            <div class="info-divider"></div>
+
+            <div class="info-row">
+                <span class="info-label">Stock actual</span>
+                <span class="info-value stock" [style.color]="getStockColor()">{{ product.stock }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Stock mínimo</span>
+                <span class="info-value">{{ product.min_stock ?? 'No definido' }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Precio</span>
+                <span class="info-value">{{ product.price ? (product.price | number:'1.2-2') + ' €' : 'No definido'
+                    }}</span>
+            </div>
+
+            <div class="info-divider"></div>
+
+            <p class="info-section-title">Ubicación en almacén</p>
+            <div class="location-grid">
+                <div class="location-item">
+                    <span class="location-label">Pasillo</span>
+                    <span class="location-value">{{ product.aisle || '—' }}</span>
+                </div>
+                <div class="location-item">
+                    <span class="location-label">Balda</span>
+                    <span class="location-value">{{ product.shelf || '—' }}</span>
+                </div>
+                <div class="location-item">
+                    <span class="location-label">Lado</span>
+                    <span class="location-value">{{ product.side || '—' }}</span>
+                </div>
+            </div>
+
+            <div class="info-divider"></div>
+
+            <div class="info-dates">
+                <span>Creado: {{ product.created_at ? (product.created_at | date:'dd/MM/yyyy') : 'N/A' }}</span>
+                <span>Actualizado: {{ product.updated_at ? (product.updated_at | date:'dd/MM/yyyy') : 'N/A' }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+}

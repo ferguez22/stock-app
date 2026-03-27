@@ -204,4 +204,8 @@
         </div>
     </div>
 
+    <!-- Modal detalle de producto -->
+    <app-product-detail [product]="selectedProduct" [visible]="showProductDetail" (close)="closeProductDetail()">
+    </app-product-detail>
+
 </div>
