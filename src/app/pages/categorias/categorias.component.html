@@ -1,6 +1,5 @@
 <div class="categorias-container">
 
-    <!-- Cabecera -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2>Categorías</h2>
@@ -13,26 +12,17 @@
         }
     </div>
 
-    <!-- Stats rápidas -->
+    <!-- Stats -->
     <div class="stats-row mb-4">
         <div class="stat-chip">
             <i class="fas fa-tags"></i>
             <span><strong>{{ categories.length }}</strong> categorías en total</span>
         </div>
-        <div class="stat-chip">
-            <i class="fas fa-sitemap"></i>
-            <span><strong>{{ parentCategories.length }}</strong> categorías principales</span>
-        </div>
-        <div class="stat-chip">
-            <i class="fas fa-layer-group"></i>
-            <span><strong>{{ categories.length - parentCategories.length }}</strong> subcategorías</span>
-        </div>
     </div>
 
-    <!-- Layout principal -->
-    <div class="main-layout" [class.with-form]="showForm">
+    <div class="main-layout">
 
-        <!-- Tabla de categorías -->
+        <!-- Tabla -->
         <div class="table-panel">
 
             @if (isLoading) {
@@ -41,7 +31,7 @@
                 <p class="mt-2 text-muted">Cargando categorías...</p>
             </div>
             } @else if (error) {
-            <div class="alert alert-danger">
+            <div class="alert alert-danger m-3">
                 <i class="fas fa-exclamation-triangle me-2"></i>{{ errorMessage }}
             </div>
             } @else if (categories.length === 0) {
@@ -56,7 +46,7 @@
             </div>
             } @else {
 
-            <!-- Vista Desktop -->
+            <!-- Desktop -->
             <div class="desktop-view">
                 <div class="table-responsive">
                     <table class="table table-hover">
@@ -64,43 +54,21 @@
                             <tr>
                                 <th>#</th>
                                 <th>Nombre</th>
-                                <th>Tipo</th>
-                                <th>Categoría padre</th>
                                 @if (isAdmin()) { <th>Acciones</th> }
                             </tr>
                         </thead>
                         <tbody>
                             @for (cat of categories; track cat.id) {
-                            <tr [class.subcategory-row]="cat.parent_id">
+                            <tr>
                                 <td class="text-muted">{{ cat.id }}</td>
-                                <td>
-                                    @if (cat.parent_id) {
-                                    <span class="ms-3">
-                                        <i class="fas fa-level-up-alt fa-rotate-90 text-muted me-1"
-                                            style="font-size:0.75rem"></i>
-                                        {{ cat.name }}
-                                    </span>
-                                    } @else {
-                                    <strong>{{ cat.name }}</strong>
-                                    }
-                                </td>
-                                <td>
-                                    @if (cat.parent_id) {
-                                    <span class="badge bg-secondary">Subcategoría</span>
-                                    } @else {
-                                    <span class="badge bg-primary">Principal</span>
-                                    }
-                                </td>
-                                <td>{{ getParentName(cat.parent_id) }}</td>
+                                <td><strong>{{ cat.name }}</strong></td>
                                 @if (isAdmin()) {
                                 <td>
                                     <div class="btn-group">
-                                        <button class="btn btn-sm btn-outline-primary" (click)="openEditForm(cat)"
-                                            title="Editar">
+                                        <button class="btn btn-sm btn-outline-primary" (click)="openEditForm(cat)">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(cat)"
-                                            title="Eliminar">
+                                        <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(cat)">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
@@ -113,41 +81,24 @@
                 </div>
             </div>
 
-            <!-- Vista Mobile -->
+            <!-- Mobile -->
             <div class="mobile-view">
                 <div class="categories-grid">
                     @for (cat of categories; track cat.id) {
-                    <div class="category-card" [class.is-sub]="cat.parent_id">
+                    <div class="category-card">
                         <div class="category-card-header">
-                            <span class="category-name">
-                                @if (cat.parent_id) {
-                                <i class="fas fa-level-up-alt fa-rotate-90 text-muted me-1"
-                                    style="font-size:0.75rem"></i>
-                                }
-                                {{ cat.name }}
-                            </span>
-                            <span class="badge" [class.bg-primary]="!cat.parent_id"
-                                [class.bg-secondary]="cat.parent_id">
-                                {{ cat.parent_id ? 'Sub' : 'Principal' }}
-                            </span>
+                            <span class="category-name">{{ cat.name }}</span>
+                            @if (isAdmin()) {
+                            <div class="category-card-actions">
+                                <button class="btn btn-sm btn-outline-primary" (click)="openEditForm(cat)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(cat)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            }
                         </div>
-                        @if (cat.parent_id) {
-                        <div class="category-parent">
-                            <small class="text-muted">
-                                <i class="fas fa-folder me-1"></i>{{ getParentName(cat.parent_id) }}
-                            </small>
-                        </div>
-                        }
-                        @if (isAdmin()) {
-                        <div class="category-card-actions">
-                            <button class="btn btn-sm btn-outline-primary" (click)="openEditForm(cat)">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(cat)">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                        }
                     </div>
                     }
                 </div>
@@ -156,7 +107,7 @@
             }
         </div>
 
-        <!-- Panel del formulario (crear / editar) -->
+        <!-- Formulario lateral -->
         @if (showForm && isAdmin()) {
         <div class="form-panel" id="category-form">
             <div class="form-panel-header">
@@ -170,12 +121,9 @@
             </div>
 
             <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="form-panel-body">
-
-                <!-- Nombre -->
-                <div class="mb-3">
+                <div class="mb-4">
                     <label class="form-label">Nombre <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" formControlName="name"
-                        placeholder="Ej: Monitores, Cables, Audio..."
+                    <input type="text" class="form-control" formControlName="name" placeholder="Ej: Monitores, Audio..."
                         [class.is-invalid]="categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched">
                     @if (categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched) {
                     <div class="invalid-feedback">
@@ -185,33 +133,15 @@
                     }
                 </div>
 
-                <!-- Categoría padre -->
-                <div class="mb-4">
-                    <label class="form-label">Categoría padre <span class="text-muted">(opcional)</span></label>
-                    <select class="form-select" formControlName="parent_id">
-                        <option [ngValue]="null">— Ninguna (categoría principal) —</option>
-                        @for (parent of getAvailableParents(); track parent.id) {
-                        <option [ngValue]="parent.id">{{ parent.name }}</option>
-                        }
-                    </select>
-                    <small class="text-muted">
-                        Déjalo vacío para crear una categoría principal
-                    </small>
-                </div>
-
-                <!-- Acciones -->
                 <div class="d-flex gap-2">
                     <button type="button" class="btn btn-outline-secondary flex-fill" (click)="closeForm()">
                         Cancelar
                     </button>
                     <button type="submit" class="btn btn-primary flex-fill" [disabled]="submitting">
-                        @if (submitting) {
-                        <span class="spinner-border spinner-border-sm me-1"></span>
-                        }
+                        @if (submitting) { <span class="spinner-border spinner-border-sm me-1"></span> }
                         {{ isEditing ? 'Guardar cambios' : 'Crear categoría' }}
                     </button>
                 </div>
-
             </form>
         </div>
         }

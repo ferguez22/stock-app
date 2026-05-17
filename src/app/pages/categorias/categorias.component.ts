@@ -17,19 +17,13 @@ import Swal from 'sweetalert2';
 export class CategoriasComponent implements OnInit {
 
   categories: ICategory[] = [];
-  // Solo categorías raíz (sin parent) para el dropdown de "categoría padre"
-  parentCategories: ICategory[] = [];
-
   isLoading = true;
   error = false;
   errorMessage = '';
-
-  // Control del formulario lateral
   showForm = false;
   isEditing = false;
   editingId: number | null = null;
   submitting = false;
-
   userRole = 'user';
   categoryForm: FormGroup;
 
@@ -39,8 +33,7 @@ export class CategoriasComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.categoryForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(2)]],
-      parent_id: [null]
+      name: ['', [Validators.required, Validators.minLength(2)]]
     });
   }
 
@@ -53,41 +46,29 @@ export class CategoriasComponent implements OnInit {
   loadCategories(): void {
     this.isLoading = true;
     this.error = false;
-
     this.categoryService.getAll().pipe(
       finalize(() => this.isLoading = false)
     ).subscribe({
-      next: (data) => {
-        this.categories = data;
-        // Las categorías padre son las que no tienen parent_id
-        this.parentCategories = data.filter(c => !c.parent_id);
-      },
-      error: (err) => {
-        console.error('Error cargando categorías:', err);
+      next: (data) => this.categories = data,
+      error: () => {
         this.error = true;
         this.errorMessage = 'No se pudieron cargar las categorías.';
       }
     });
   }
 
-  // Abre el formulario para crear
   openCreateForm(): void {
     this.isEditing = false;
     this.editingId = null;
-    this.categoryForm.reset({ parent_id: null });
+    this.categoryForm.reset();
     this.showForm = true;
   }
 
-  // Abre el formulario pre-cargado para editar
   openEditForm(category: ICategory): void {
     this.isEditing = true;
     this.editingId = category.id!;
-    this.categoryForm.patchValue({
-      name: category.name,
-      parent_id: category.parent_id ?? null
-    });
+    this.categoryForm.patchValue({ name: category.name });
     this.showForm = true;
-    // Scroll suave al formulario en móvil
     setTimeout(() => {
       document.getElementById('category-form')?.scrollIntoView({ behavior: 'smooth' });
     }, 100);
@@ -97,7 +78,7 @@ export class CategoriasComponent implements OnInit {
     this.showForm = false;
     this.isEditing = false;
     this.editingId = null;
-    this.categoryForm.reset({ parent_id: null });
+    this.categoryForm.reset();
   }
 
   onSubmit(): void {
@@ -107,48 +88,33 @@ export class CategoriasComponent implements OnInit {
     }
 
     this.submitting = true;
-    const formValue = this.categoryForm.value;
+    const payload: ICategory = { name: this.categoryForm.value.name.trim() };
 
-    // Convertir parent_id a número o null
-    const payload: ICategory = {
-      name: formValue.name.trim(),
-      parent_id: formValue.parent_id ? Number(formValue.parent_id) : null
-    };
+    const request$ = this.isEditing
+      ? this.categoryService.update(this.editingId!, payload)
+      : this.categoryService.create(payload);
 
-    if (this.isEditing && this.editingId) {
-      this.categoryService.update(this.editingId, payload).pipe(
-        finalize(() => this.submitting = false)
-      ).subscribe({
-        next: () => {
-          Swal.fire({ icon: 'success', title: 'Categoría actualizada', timer: 1500, showConfirmButton: false });
-          this.closeForm();
-          this.loadCategories();
-        },
-        error: (err) => {
-          Swal.fire({ icon: 'error', title: 'Error', text: err.error?.message || 'No se pudo actualizar la categoría' });
-        }
-      });
-    } else {
-      this.categoryService.create(payload).pipe(
-        finalize(() => this.submitting = false)
-      ).subscribe({
-        next: () => {
-          Swal.fire({ icon: 'success', title: 'Categoría creada', timer: 1500, showConfirmButton: false });
-          this.closeForm();
-          this.loadCategories();
-        },
-        error: (err) => {
-          Swal.fire({ icon: 'error', title: 'Error', text: err.error?.message || 'No se pudo crear la categoría' });
-        }
-      });
-    }
+    request$.pipe(finalize(() => this.submitting = false)).subscribe({
+      next: () => {
+        Swal.fire({
+          icon: 'success',
+          title: this.isEditing ? 'Categoría actualizada' : 'Categoría creada',
+          timer: 1500,
+          showConfirmButton: false
+        });
+        this.closeForm();
+        this.loadCategories();
+      },
+      error: (err) => {
+        Swal.fire({ icon: 'error', title: 'Error', text: err.error?.message || 'Operación fallida' });
+      }
+    });
   }
 
   confirmDelete(category: ICategory): void {
     Swal.fire({
       title: '¿Eliminar categoría?',
-      html: `¿Estás seguro de eliminar <strong>${category.name}</strong>?<br>
-             <small class="text-muted">Los productos asociados quedarán sin categoría.</small>`,
+      html: `¿Estás seguro de eliminar <strong>${category.name}</strong>?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, eliminar',
@@ -159,32 +125,18 @@ export class CategoriasComponent implements OnInit {
         this.categoryService.delete(category.id!).subscribe({
           next: () => {
             Swal.fire({ icon: 'success', title: 'Eliminada', timer: 1500, showConfirmButton: false });
-            this.loadCategories();
-            // Si estaba editando esta categoría, cerrar el form
             if (this.editingId === category.id) this.closeForm();
+            this.loadCategories();
           },
           error: (err) => {
-            Swal.fire({ icon: 'error', title: 'Error', text: err.error?.message || 'No se pudo eliminar la categoría' });
+            Swal.fire({ icon: 'error', title: 'Error', text: err.error?.message || 'No se pudo eliminar' });
           }
         });
       }
     });
   }
 
-  // Helper para el template
   isAdmin(): boolean {
     return this.userRole === 'admin';
-  }
-
-  // Nombre del padre para mostrar en la tabla
-  getParentName(parentId: number | null | undefined): string {
-    if (!parentId) return '—';
-    const parent = this.categories.find(c => c.id === parentId);
-    return parent?.name || '—';
-  }
-
-  // Categorías disponibles como padre (excluye la que se está editando)
-  getAvailableParents(): ICategory[] {
-    return this.categories.filter(c => !c.parent_id && c.id !== this.editingId);
   }
 }
