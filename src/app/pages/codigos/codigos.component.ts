@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { ProductService } from '../../services/product.service';
 import { IProduct } from '../../interfaces/iproduct.interface';
-import JsBarcode from 'jsbarcode';
 import { jsPDF } from 'jspdf';
-import { CommonModule } from '@angular/common';
+import QRCode from 'qrcode';
 
 @Component({
   selector: 'app-codigos',
@@ -13,16 +13,15 @@ import { CommonModule } from '@angular/common';
   templateUrl: './codigos.component.html',
   styleUrls: ['./codigos.component.css'],
 })
-  
 export class CodigosComponent implements OnInit {
-  products: IProduct[] = []; // Lista de productos cargados desde el inventario
-  selectedProducts: { [key: string]: number } = {}; // Productos seleccionados con cantidad
-  barcodePreviews: { [key: string]: string } = {}; // URLs de las miniaturas de códigos de barras
+  products: IProduct[] = [];
+  filteredProducts: IProduct[] = [];
+  selectedProducts: { [key: string]: number } = {};
+  qrPreviews: { [key: string]: string } = {};
   isLoading = true;
   error = false;
-  errorMessage = ''
-  filteredProducts: IProduct[] = []; // Lista de productos filtrados por búsqueda
-  searchTerm: string = ''; // Término de búsqueda
+  errorMessage = '';
+  searchTerm = '';
 
   constructor(private productService: ProductService) {}
 
@@ -30,236 +29,144 @@ export class CodigosComponent implements OnInit {
     this.loadProducts();
   }
 
+  // Convierte id a string para usar como clave del diccionario
+  private key(id: number | undefined): string {
+    return String(id ?? '');
+  }
+
   loadProducts(): void {
     this.isLoading = true;
     this.error = false;
-    
+
     this.productService.getAll().subscribe({
-      next: (products) => {
+      next: async (products) => {
         this.products = products;
-        this.filteredProducts = [...products]; // Inicializar con todos los productos
-        
-        // Generar todos los códigos de barras al cargar
-        this.products.forEach(product => {
-          if (product.id && product.code) {
-            this.generateBarcodePreview(String(product.id), product.code);
+        this.filteredProducts = [...products];
+        for (const product of products) {
+          if (product.id) {
+            const qrValue = product.code || String(product.id);
+            await this.generateQRPreview(product.id, qrValue);
           }
-        });
+        }
         this.isLoading = false;
       },
-      error: (err) => {
-        console.error('Error al cargar productos:', err);
+      error: () => {
         this.error = true;
-        this.errorMessage = 'No se pudieron cargar los productos. Por favor, inténtalo de nuevo más tarde.';
+        this.errorMessage = 'No se pudieron cargar los productos.';
         this.isLoading = false;
       }
     });
   }
 
-  toggleSelection(productId: string, event?: Event): void {
-    // Si el evento viene de un input, evitar doble acción
-    if (event) {
-      event.stopPropagation();
-    }
+  async generateQRPreview(id: number, code: string): Promise<void> {
+    this.qrPreviews[this.key(id)] = await QRCode.toDataURL(code, {
+      width: 150,
+      margin: 1,
+      errorCorrectionLevel: 'M'
+    });
+  }
 
-    const product = this.products.find(p => String(p.id) === productId);
-    
-    if (!this.selectedProducts[productId]) {
-      this.selectedProducts[productId] = 1; // Mínimo de 1 código por producto
+  toggleSelection(id: number | undefined): void {
+    const k = this.key(id);
+    if (!this.selectedProducts[k]) {
+      this.selectedProducts[k] = 1;
     } else {
-      delete this.selectedProducts[productId];
+      delete this.selectedProducts[k];
     }
   }
 
-  isSelected(productId: string): boolean {
-    return !!this.selectedProducts[productId];
+  isSelected(id: number | undefined): boolean {
+    return !!this.selectedProducts[this.key(id)];
   }
 
-  generateBarcodePreview(productId: string, code: string): void {
-    const canvas = document.createElement('canvas');
-    canvas.width = 200; // Aumentar resolución de la miniatura
-    canvas.height = 100;
-    
-    JsBarcode(canvas, code, {
-      format: 'CODE128',
-      width: 2,
-      height: 40,
-      displayValue: true,
-      fontSize: 10,
-      margin: 5,
-      background: '#FFFFFF',
-      lineColor: '#000000'
-    });
-    
-    // Convertir canvas a URL de datos con calidad óptima
-    this.barcodePreviews[productId] = canvas.toDataURL('image/png', 1.0);
+  incrementQuantity(id: number | undefined): void {
+    const k = this.key(id);
+    this.selectedProducts[k] = (this.selectedProducts[k] || 0) + 1;
   }
 
-  totalBarcodeCount(products: IProduct[], selectedProducts: {[key: string]: number}): number {
-    return products.reduce((total, product) => {
-      return total + (selectedProducts[product.id || ''] || 0);
-    }, 0);
-  }
-
-  generatePDF(): void {
-  const selectedProducts = this.products.filter(product =>
-    this.selectedProducts[product.id || '']
-  );
-
-    if (selectedProducts.length === 0) {
-      import('sweetalert2').then(Swal => {
-      Swal.default.fire({
-        title: 'Atención',
-        text: 'Por favor, selecciona al menos un producto para generar el PDF.',
-        icon: 'warning',
-        confirmButtonText: 'Entendido'
-      });
-      });
-      return;
+  decrementQuantity(id: number | undefined): void {
+    const k = this.key(id);
+    if (this.selectedProducts[k] > 1) {
+      this.selectedProducts[k]--;
+    } else {
+      delete this.selectedProducts[k];
     }
-
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4',
-      compress: false,
-      precision: 16
-    });
-    
-      // --- CONFIGURACIÓN PARA 24 CÓDIGOS POR PÁGINA ---
-      const barcodeWidth = 40;  // Reducir ancho a 4 cm
-      const barcodeHeight = 15; // Reducir alto a 1.5 cm
-      const itemsPerRow = 4;    // 4 códigos por fila
-      const itemsPerPage = 24;  // 24 códigos por página (6 filas x 4 columnas)
-      const padding = 7;        // Reducir espacio entre códigos
-      // ---------------------------------------------------
-    
-    let x = 15;
-    let y = 20;
-    let currentItemCount = 0;
-
-    selectedProducts.forEach((product) => {
-      const quantity = this.selectedProducts[String(product.id || '')];
-      
-      for (let i = 0; i < quantity; i++) {
-        const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        
-        // --- MODIFICA ESTOS VALORES PARA RESOLUCIÓN SVG ---
-        svgElement.setAttribute("width", "1000");  // Resolución horizontal
-        svgElement.setAttribute("height", "500");  // Resolución vertical
-        // -------------------------------------------------
-        
-        svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-        
-        JsBarcode(svgElement, product.code, {
-          format: "CODE128",
-          // --- MODIFICA ESTOS VALORES PARA DETALLES DEL CÓDIGO ---
-          width: 8,         // Grosor de líneas (aumentar para líneas más gruesas)
-          height: 400,      // Altura del código (aumentar para código más alto)
-          fontSize: 40,     // Tamaño del texto del código
-          margin: 5,        // Margen interno del código
-          textMargin: 5,    // Espacio entre código y texto
-          // ----------------------------------------------------
-          displayValue: true,
-          background: "#FFFFFF",
-          lineColor: "#000000"
-        });
-        
-        document.body.appendChild(svgElement);
-        
-        const svgString = new XMLSerializer().serializeToString(svgElement);
-        
-        const canvas = document.createElement("canvas");
-        canvas.width = 1200;
-        canvas.height = 600;
-        const ctx = canvas.getContext("2d");
-        
-        const img = new Image();
-        img.onload = () => {
-          ctx!.drawImage(img, 0, 0);
-          
-          const imgData = canvas.toDataURL("image/png", 1.0);
-          
-          pdf.addImage(imgData, "PNG", x, y, barcodeWidth, barcodeHeight, undefined, "NONE");
-          
-          pdf.setDrawColor(150, 150, 150);
-          pdf.setLineWidth(0.05);
-          pdf.rect(x, y, barcodeWidth, barcodeHeight);
-          
-          currentItemCount++;
-          
-          if (currentItemCount % itemsPerRow === 0) {
-            x = 15;
-            y += barcodeHeight + padding;
-          } else {
-            x += barcodeWidth + (padding / 2);
-          }
-          
-          if (currentItemCount % itemsPerPage === 0 && 
-              (i < quantity - 1 || product !== selectedProducts[selectedProducts.length - 1])) {
-            pdf.addPage();
-            x = 15;
-            y = 20;
-          }
-          
-          if (product === selectedProducts[selectedProducts.length - 1] && 
-              i === quantity - 1) {
-            pdf.setProperties({
-              title: "Códigos de Barras - Alta Resolución",
-              creator: "StockApp",
-              subject: "Códigos de Barras Optimizados"
-            });
-            
-            pdf.save("codigos-de-barras-nitidos.pdf");
-          }
-        };
-        
-        img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgString)));
-        
-        document.body.removeChild(svgElement);
-      }
-    });
   }
 
   totalSelectedCount(): number {
-    return Object.values(this.selectedProducts).reduce((total, qty) => total + qty, 0);
+    return Object.values(this.selectedProducts).reduce((a, b) => a + b, 0);
   }
 
-// Añadir estos métodos a la clase CodigosComponent
-
-  incrementQuantity(productId: string): void {
-    if (!this.selectedProducts[productId]) {
-      this.selectedProducts[productId] = 1;
-    } else {
-      this.selectedProducts[productId]++;
-    }
-  }
-
-  decrementQuantity(productId: string): void {
-    if (this.selectedProducts[productId] && this.selectedProducts[productId] > 1) {
-      this.selectedProducts[productId]--;
-    } else {
-      // Si llega a 0 o menos, eliminar la selección
-      delete this.selectedProducts[productId];
-    }
-  }
-
-    applySearch(): void {
-    if (!this.searchTerm.trim()) {
-      this.filteredProducts = [...this.products];
-      return;
-    }
-
+  applySearch(): void {
     const term = this.searchTerm.toLowerCase().trim();
-    this.filteredProducts = this.products.filter(product => 
-      (product.item && product.item.toLowerCase().includes(term)) || 
-      (product.code && product.code.toLowerCase().includes(term))
-    );
-    }
-  
-    clearSearch(): void {
+    this.filteredProducts = term
+      ? this.products.filter(p =>
+          p.item?.toLowerCase().includes(term) ||
+          p.code?.toLowerCase().includes(term)
+        )
+      : [...this.products];
+  }
+
+  clearSearch(): void {
     this.searchTerm = '';
     this.filteredProducts = [...this.products];
   }
 
+  async generatePDF(): Promise<void> {
+    const selected = this.products.filter(p => this.selectedProducts[this.key(p.id)]);
+
+    if (selected.length === 0) {
+      import('sweetalert2').then(Swal => {
+        Swal.default.fire({ icon: 'warning', title: 'Atención', text: 'Selecciona al menos un producto.' });
+      });
+      return;
+    }
+
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const qrSize  = 38;
+    const cellW   = 45;
+    const cellH   = 50;
+    const cols    = 4;
+    const perPage = 20;
+    const marginX = 12.5;
+    const marginY = 15;
+
+    const items: IProduct[] = [];
+    selected.forEach(p => {
+      const qty = this.selectedProducts[this.key(p.id)];
+      for (let i = 0; i < qty; i++) items.push(p);
+    });
+
+    for (let i = 0; i < items.length; i++) {
+      const product = items[i];
+
+      if (i > 0 && i % perPage === 0) pdf.addPage();
+
+      const pos = i % perPage;
+      const col = pos % cols;
+      const row = Math.floor(pos / cols);
+      const x   = marginX + col * cellW;
+      const y   = marginY + row * cellH;
+
+      const dataUrl = await QRCode.toDataURL(product.code || String(product.id ?? ''), {
+        width: 300,
+        margin: 1,
+        errorCorrectionLevel: 'M'
+      });
+
+      pdf.addImage(dataUrl, 'PNG', x, y, qrSize, qrSize);
+
+      const name = product.item?.length > 22
+        ? product.item.substring(0, 22) + '...'
+        : product.item;
+
+      pdf.setFontSize(6);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(name, x + qrSize / 2, y + qrSize + 4, { align: 'center' });
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(product.code || '', x + qrSize / 2, y + qrSize + 8, { align: 'center' });
+    }
+
+    pdf.save('codigos-qr.pdf');
+  }
 }
