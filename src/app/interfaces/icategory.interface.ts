@@ -1,12 +1,8 @@
-// Soporta subcategorías mediante parent_id (relación consigo misma)
 export interface ICategory {
-  id?: number;              // AUTO_INCREMENT
-  name: string;             // Nombre de la categoría (ej: "Audio", "Video")
+  id?: number;
+  name: string;
   description?: string;
-  parent_id?: number | null; // Si es null = categoría principal, si tiene valor = subcategoría
-  created_at?: string;
-  updated_at?: string;
-
-  // Dato populado: cuando la API devuelve las subcategorías anidadas
-  children?: ICategory[];
+  parent_id?: number | null;
+  parent_name?: string; // viene del JOIN en la API
+  product_count?: number;
 }

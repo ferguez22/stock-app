@@ -1,0 +1,209 @@
+.categorias-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    /* ← crece con el contenido */
+    padding: 20px;
+    padding-bottom: 40px;
+    background-color: #f5f7fa;
+    border-radius: 8px;
+    box-sizing: border-box;
+    /* ← sin overflow, lo maneja el padre */
+}
+
+/* Stats chips */
+.stats-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.stat-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.07);
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.stat-chip i {
+    color: #0d6efd;
+}
+
+/* Layout principal: tabla + formulario lateral */
+.main-layout {
+    display: flex;
+    gap: 20px;
+    flex: 1;
+    min-height: 0;
+}
+
+.table-panel {
+    flex: 1;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Fila de subcategoría: ligero indent visual */
+.subcategory-row td:first-child {
+    border-left: 3px solid #dee2e6;
+}
+
+/* Panel del formulario lateral */
+.form-panel {
+    width: 320px;
+    flex-shrink: 0;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    position: sticky;
+    top: 0;
+}
+
+.form-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #eee;
+    background: #f8f9fa;
+    border-radius: 10px 10px 0 0;
+}
+
+.form-panel-body {
+    padding: 20px;
+}
+
+/* Empty state */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+}
+
+/* Tabla */
+.table-responsive {
+    overflow: visible;
+}
+
+.table th,
+.table td {
+    vertical-align: middle;
+    padding: 12px 16px;
+}
+
+.table thead th {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+    font-weight: 600;
+}
+
+/* Vistas desktop / mobile */
+.desktop-view {
+    display: block;
+}
+
+.mobile-view {
+    display: none;
+}
+
+/* Grid de tarjetas mobile */
+.categories-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 16px;
+}
+
+.category-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 14px;
+    border: 1px solid #e9ecef;
+    transition: box-shadow 0.2s;
+}
+
+.category-card.is-sub {
+    border-left: 3px solid #adb5bd;
+}
+
+.category-card:hover {
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.category-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.category-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.category-parent {
+    margin-bottom: 10px;
+}
+
+.category-card-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .main-layout {
+        flex-direction: column;
+    }
+
+    .form-panel {
+        width: 100%;
+        position: static;
+    }
+
+    .desktop-view {
+        display: none;
+    }
+
+    .mobile-view {
+        display: block;
+    }
+}
+
+@media (max-width: 576px) {
+    .categorias-container {
+        padding: 15px;
+        padding-bottom: 80px;
+    }
+
+    .categories-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-row {
+        gap: 8px;
+    }
+
+    .stat-chip {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+    }
+}

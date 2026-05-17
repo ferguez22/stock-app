@@ -61,9 +61,9 @@ export class CategoryService {
   }
 
   update(id: number, category: Partial<ICategory>): Observable<ICategory> {
-    return this.http.put<IApiResponse<ICategory>>(`${this.apiUrl}/${id}`, category).pipe(
+    return this.http.put<IApiResponse<any>>(`${this.apiUrl}/${id}`, category).pipe(
       map(response => {
-        if (!response.success || !response.data) {
+        if (!response.success) {
           throw new Error(response.message || 'Error al actualizar la categoría');
         }
         return response.data;

@@ -21,6 +21,10 @@
         <a class="nav-link mb-2" [routerLink]="['/inventario']" [routerLinkActive]="['active']">
             <i class="fas fa-boxes"></i> <span class="nav-text" [class.collapsed-text]="isCollapsed">Inventario</span>
         </a>
+        <a class="nav-link mb-2" [routerLink]="['/categorias']" [routerLinkActive]="['active']">
+            <i class="fas fa-tags"></i>
+            <span class="nav-text" [class.collapsed-text]="isCollapsed">Categorías</span>
+        </a>
         <a class="nav-link mb-2" [routerLink]="['/escaner']" [routerLinkActive]="['active']">
             <i class="fa-solid fa-expand"></i> <span class="nav-text"
                 [class.collapsed-text]="isCollapsed">Escaner</span>
@@ -47,6 +51,10 @@
     <a class="mobile-nav-link" [routerLink]="['/inventario']" [routerLinkActive]="['active']">
         <i class="fas fa-boxes"></i>
         <span class="mobile-nav-text">Inventario</span>
+    </a>
+    <a class="mobile-nav-link" [routerLink]="['/categorias']" [routerLinkActive]="['active']">
+        <i class="fas fa-tags"></i>
+        <span class="mobile-nav-text">Categorías</span>
     </a>
     <a class="mobile-nav-link" [routerLink]="['/escaner']" [routerLinkActive]="['active']">
         <i class="fa-solid fa-expand"></i>

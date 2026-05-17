@@ -25,22 +25,20 @@ export class AuthService {
 
   // --- AUTENTICACIÓN ---
 
-  login(credentials: { email: string; password: string }): Observable<IAuthResponse> {
-    return this.http.post<IAuthResponse>(`${this.authUrl}/login`, credentials)
-      .pipe(
-        tap(response => {
-          this.tokenService.setToken(response.token);
-
-          const userId = this.extractIdFromToken(response.token);
-          if (userId) {
-            localStorage.setItem(this.USER_ID_KEY, userId.toString());
-          }
-
-          if (response.user) {
-            this.tokenService.setUser(JSON.stringify(response.user));
-          }
-        })
-      );
+  login(credentials: { email: string, password: string }): Observable<IAuthResponse> {
+    return this.http.post<IAuthResponse>(`${this.authUrl}/login`, credentials).pipe(
+      tap(response => {
+        this.tokenService.setToken(response.token);
+        const userId = this.extractIdFromToken(response.token);
+        if (userId) {
+          localStorage.setItem(this.USER_ID_KEY, String(userId));
+          // Fetcheamos el usuario y lo guardamos en localStorage
+          this.getUserById(String(userId)).subscribe(user => {
+            this.tokenService.setUser(JSON.stringify(user));
+          });
+        }
+      })
+    );
   }
 
   logout(): void {

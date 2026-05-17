@@ -9,6 +9,7 @@ import { CodigosComponent } from './pages/codigos/codigos.component';
 import { EscanerComponent } from './pages/escaner/escaner.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { authGuard } from './guards/auth.guard';
+import { CategoriasComponent } from './pages/categorias/categorias.component';
 
 export const routes: Routes = [
   {
@@ -21,7 +22,7 @@ export const routes: Routes = [
       { path: 'codigos', component: CodigosComponent },
       { path: 'escaner', component: EscanerComponent },
       { path: 'perfil', component: PerfilComponent},
-      
+      { path: 'categorias', component: CategoriasComponent },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ]
   },
