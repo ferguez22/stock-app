@@ -1,101 +1,75 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { ProductService } from '../../services/product.service';
 import { TransactionService } from '../../services/transaction.service';
 import { AuthService } from '../../services/user.service';
-import { TokenService } from '../../services/token.service';
 import { IProduct } from '../../interfaces/iproduct.interface';
 import Swal from 'sweetalert2';
+import { TokenService } from '../../services/token.service';
 
 @Component({
   selector: 'app-escaner',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ZXingScannerModule],
   templateUrl: './escaner.component.html',
   styleUrl: './escaner.component.css'
 })
   
+  
 export class EscanerComponent implements OnInit, AfterViewInit {
   @ViewChild('barcodeInput') barcodeInput!: ElementRef;
 
+  userRole = 'user';
   scannerMode: 'usb' | 'camera' = 'usb';
-  scannedCode: string = '';
+  scannedCode = '';
   isLoading = false;
   error = false;
   errorMessage = '';
-  scannedProduct: IProduct | null = null;
+
   myOutProducts: any[] = [];
   isLoadingOutProducts = false;
   outProductsError = false;
+
   othersOutProducts: any[] = [];
   isLoadingOthersProducts = false;
   othersProductsError = false;
+
+  scannerEnabled = false;
+  cameraPermissionDenied = false;
+  availableDevices: MediaDeviceInfo[] = [];
 
   constructor(
     private productService: ProductService,
     private transactionService: TransactionService,
     private authService: AuthService,
-    private tokenService: TokenService,
-  ) {}
+    private tokenService: TokenService
+  ) { }
 
   ngOnInit(): void {
     if (this.isMobileDevice()) {
       this.scannerMode = 'camera';
+      this.scannerEnabled = true;
     }
-    
+
+    const cachedUser = this.tokenService.getUser();
+    if (cachedUser) this.userRole = cachedUser.role;
+
     this.loadUserOutProducts();
-    this.loadOthersOutProducts(); // Cargar productos de otros usuarios
+    if (this.userRole === 'admin') {
+      this.loadOthersOutProducts();
+    }
   }
 
-  loadUserOutProducts(): void {
-    const userId = this.authService.getCurrentUserId();
-    if (!userId) return;
-    
-    this.isLoadingOutProducts = true;
-    this.outProductsError = false;
-    
-    this.transactionService.getUserOutProducts(userId).subscribe({
-      next: (data) => {
-        this.myOutProducts = data;
-        this.isLoadingOutProducts = false;
-      },
-      error: (err) => {
-        console.error('Error cargando productos fuera de almacén:', err);
-        this.outProductsError = true;
-        this.isLoadingOutProducts = false;
-      }
-    });
-  }
-
-  loadOthersOutProducts(): void {
-    this.isLoadingOthersProducts = true;
-    this.othersProductsError = false;
-    
-    this.transactionService.getOthersOutProducts().subscribe({
-      next: (data) => {
-        this.othersOutProducts = data;
-        this.isLoadingOthersProducts = false;
-      },
-      error: (err) => {
-        console.error('Error cargando productos de otros usuarios:', err);
-        this.othersProductsError = true;
-        this.isLoadingOthersProducts = false;
-      }
-    });
-  }
-
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.focusInput();
   }
 
   setScannerMode(mode: 'usb' | 'camera'): void {
     this.scannerMode = mode;
-    if (mode === 'usb') {
-      setTimeout(() => {
-        this.focusInput();
-      }, 100);
-    }
+    this.scannerEnabled = mode === 'camera';
+    if (mode === 'usb') setTimeout(() => this.focusInput(), 100);
   }
 
   focusInput(): void {
@@ -106,50 +80,89 @@ export class EscanerComponent implements OnInit, AfterViewInit {
 
   processBarcode(): void {
     if (!this.scannedCode.trim()) return;
-  
+    this.searchProduct(this.scannedCode.trim());
+  }
+
+  onZxingScan(code: string): void {
+    if (!code || this.isLoading) return;
+    this.scannerEnabled = false;
+    this.searchProduct(code);
+  }
+
+  onCamerasFound(devices: MediaDeviceInfo[]): void {
+    this.availableDevices = devices;
+  }
+
+  onPermissionResponse(permission: boolean): void {
+    this.cameraPermissionDenied = !permission;
+  }
+
+  searchProduct(code: string): void {
     this.isLoading = true;
     this.error = false;
-    this.errorMessage = '';
-  
-    this.productService.findByBarcode(this.scannedCode).subscribe({
+
+    this.productService.findByBarcode(code).subscribe({
       next: (product) => {
         this.isLoading = false;
-        this.scannedProduct = product;
         this.showProductActionDialog(product);
       },
-      error: (err) => {
+      error: () => {
         this.isLoading = false;
         this.error = true;
-        this.errorMessage = err.message || 'No se encontró ningún producto con este código de barras.';
-  
-        Swal.fire({
-          icon: 'error',
-          title: 'Producto no encontrado',
-          text: this.errorMessage,
-          confirmButtonText: 'Aceptar'
-        });
-        
-        // Resetear el código escaneado y enfocar el input para el siguiente escaneo
-        setTimeout(() => {
-          this.scannedCode = '';
-          this.focusInput();
-        }, 100);
+        this.errorMessage = `Producto no encontrado: "${code}"`;
+        this.scannedCode = '';
+        this.focusInput();
+        if (this.scannerMode === 'camera') this.scannerEnabled = true;
       }
     });
   }
 
+  getOutStatus(productId: number): {
+    isOut: boolean;
+    isMine: boolean;
+    userName?: string;
+    date?: string;
+    quantity?: number;
+   } {
+    const mine = this.myOutProducts.find((i: any) => i.product?.id === productId);
+    if (mine) return { isOut: true, isMine: true, date: mine.lastExitDate, quantity: mine.quantityOut };
+
+    const others = this.othersOutProducts.find((i: any) => i.product?.id === productId);
+    if (others) return { isOut: true, isMine: false, userName: others.user?.name, date: others.lastExitDate, quantity: others.quantityOut };
+
+    return { isOut: false, isMine: false };
+  }
+
   showProductActionDialog(product: IProduct): void {
-    const stockColor = product.stock <= 2 ? 'text-danger' :
-                       product.stock <= 5 ? 'text-warning' : 'text-success';
+    const out = this.getOutStatus(product.id!);
+    const stockColor = product.stock <= 2 ? 'text-danger' : product.stock <= 5 ? 'text-warning' : 'text-success';
+
+    let statusHtml = '';
+    if (out.isOut && out.isMine) {
+      const d = out.date ? new Date(out.date).toLocaleString('es-ES') : 'N/A';
+      statusHtml = `<div class="alert alert-warning mt-2 text-start py-2">
+        <i class="fas fa-exclamation-triangle me-1"></i>
+        <strong>Tienes ${out.quantity} ud. fuera</strong><br>
+        <small>Desde: ${d}</small>
+      </div>`;
+    } else if (out.isOut && !out.isMine) {
+      const d = out.date ? new Date(out.date).toLocaleString('es-ES') : 'N/A';
+      statusHtml = `<div class="alert alert-info mt-2 text-start py-2">
+        <i class="fas fa-user me-1"></i>
+        <strong>${out.userName}</strong> tiene ${out.quantity} ud. fuera<br>
+        <small>Desde: ${d}</small>
+      </div>`;
+    }
 
     Swal.fire({
-      title: 'Producto encontrado',
+      title: product.item,
       html: `
-        <div class="product-info text-start">
-          <h4>${product.item}</h4>
-          <p><strong>Código:</strong> ${product.code || 'N/A'}</p>
-          <p><strong>Marca:</strong> ${product.brand || 'No especificado'}</p>
-          <p><strong>Stock actual:</strong> <span class="${stockColor} fw-bold">${product.stock}</span></p>
+        <div class="text-start">
+          <p class="mb-1"><strong>Marca:</strong> ${product.brand}</p>
+          <p class="mb-1"><strong>Código:</strong> ${product.code || 'N/A'}</p>
+          <p class="mb-1"><strong>Categoría:</strong> ${product.category_name || 'N/A'}</p>
+          <p class="mb-1"><strong>Stock:</strong> <span class="${stockColor} fw-bold">${product.stock}</span></p>
+          ${statusHtml}
         </div>
       `,
       showDenyButton: true,
@@ -161,83 +174,81 @@ export class EscanerComponent implements OnInit, AfterViewInit {
       cancelButtonText: 'Cancelar',
       focusConfirm: false
     }).then((result) => {
-      if (result.isConfirmed) {
-        this.updateProductStock(product, 'IN');
-      } else if (result.isDenied) {
-        this.updateProductStock(product, 'OUT');
+      if (result.isConfirmed) this.updateProductStock(product, 'IN');
+      else if (result.isDenied) this.updateProductStock(product, 'OUT');
+      else {
+        this.scannedCode = '';
+        this.focusInput();
+        if (this.scannerMode === 'camera') this.scannerEnabled = true;
       }
     });
   }
 
-  updateProductStock(product: IProduct, transactionType: 'IN' | 'OUT'): void {
+  updateProductStock(product: IProduct, type: 'IN' | 'OUT'): void {
     Swal.fire({
-      title: transactionType === 'IN' ? 'Entrada de producto' : 'Salida de producto',
-      text: `¿Cuántas unidades de "${product.item}" quieres ${transactionType === 'IN' ? 'ingresar al' : 'retirar del'} almacén?`,
+      title: type === 'IN' ? 'Entrada de producto' : 'Salida de producto',
+      text: `¿Cuántas unidades de "${product.item}" quieres ${type === 'IN' ? 'ingresar al' : 'retirar del'} almacén?`,
       input: 'number',
-      inputAttributes: {
-        min: '1',
-        step: '1'
-      },
+      inputAttributes: { min: '1', step: '1' },
       showCancelButton: true,
       confirmButtonText: 'Confirmar',
       cancelButtonText: 'Cancelar',
-      inputValidator: (value) => {
-        if (!value || parseInt(value) <= 0) {
-          return 'Debes ingresar una cantidad válida mayor a cero';
-        }
-        return null;
-      }
+      inputValidator: (value) => (!value || parseInt(value) <= 0) ? 'Cantidad inválida' : null
     }).then((result) => {
-      if (result.isConfirmed) {
-        const quantity = parseInt(result.value);
-
-        if (transactionType === 'OUT' && quantity > product.stock) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Stock insuficiente',
-            text: `Solo hay ${product.stock} unidades disponibles`
-          });
-          return;
-        }
-
-        Swal.fire({
-          title: 'Procesando...',
-          allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading();
-          }
-        });
-
-        const userId = this.authService.getCurrentUserId()
-
-        this.transactionService.create({
-          product_id: product.id!,
-          user_id: userId!,
-          type: transactionType,
-          quantity: quantity
-        }).subscribe({
-          next: () => {
-            Swal.fire({
-              icon: 'success',
-              title: 'Operación exitosa',
-              text: `Se ha registrado la ${transactionType === 'IN' ? 'entrada' : 'salida'} de ${quantity} unidades`
-            });
-
-            this.scannedCode = '';
-            this.focusInput();
-            this.loadUserOutProducts();
-            this.loadOthersOutProducts();
-          },
-          error: (err: any) => {
-            console.error('Error en la transacción:', err);
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: 'No se pudo procesar la transacción. Intente nuevamente.'
-            });
-          }
-        });
+      if (!result.isConfirmed) {
+        this.scannedCode = '';
+        this.focusInput();
+        if (this.scannerMode === 'camera') this.scannerEnabled = true;
+        return;
       }
+
+      const quantity = parseInt(result.value);
+
+      if (type === 'OUT' && quantity > product.stock) {
+        Swal.fire({ icon: 'error', title: 'Stock insuficiente', text: `Solo hay ${product.stock} unidades disponibles` });
+        return;
+      }
+
+      Swal.fire({ title: 'Procesando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+      this.transactionService.create({ product_id: product.id!, type, quantity }).subscribe({
+        next: () => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Operación exitosa',
+            text: `${type === 'IN' ? 'Entrada' : 'Salida'} de ${quantity} ud. registrada`
+          });
+          this.scannedCode = '';
+          this.focusInput();
+          if (this.scannerMode === 'camera') this.scannerEnabled = true;
+          this.loadUserOutProducts();
+          this.loadOthersOutProducts();
+        },
+        error: () => {
+          Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo procesar la transacción' });
+          if (this.scannerMode === 'camera') this.scannerEnabled = true;
+        }
+      });
+    });
+  }
+
+  loadUserOutProducts(): void {
+    const userId = this.authService.getCurrentUserId();
+    if (!userId) return;
+    this.isLoadingOutProducts = true;
+    this.outProductsError = false;
+    this.transactionService.getUserOutProducts(userId).subscribe({
+      next: (data) => { this.myOutProducts = data; this.isLoadingOutProducts = false; },
+      error: () => { this.outProductsError = true; this.isLoadingOutProducts = false; }
+    });
+  }
+
+  loadOthersOutProducts(): void {
+    this.isLoadingOthersProducts = true;
+    this.othersProductsError = false;
+    this.transactionService.getOthersOutProducts().subscribe({
+      next: (data) => { this.othersOutProducts = data; this.isLoadingOthersProducts = false; },
+      error: () => { this.othersProductsError = true; this.isLoadingOthersProducts = false; }
     });
   }
 
