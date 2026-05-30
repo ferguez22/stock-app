@@ -124,10 +124,10 @@ export class EscanerComponent implements OnInit, AfterViewInit {
     date?: string;
     quantity?: number;
    } {
-    const mine = this.myOutProducts.find((i: any) => i.product?.id === productId);
+    const mine   = this.myOutProducts.find((i: any) => Number(i.product?.id) === productId);
     if (mine) return { isOut: true, isMine: true, date: mine.lastExitDate, quantity: mine.quantityOut };
 
-    const others = this.othersOutProducts.find((i: any) => i.product?.id === productId);
+    const others = this.othersOutProducts.find((i: any) => Number(i.product?.id) === productId);
     if (others) return { isOut: true, isMine: false, userName: others.user?.name, date: others.lastExitDate, quantity: others.quantityOut };
 
     return { isOut: false, isMine: false };
