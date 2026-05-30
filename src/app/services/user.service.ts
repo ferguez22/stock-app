@@ -29,18 +29,23 @@ export class AuthService {
     return this.http.post<IAuthResponse>(`${this.authUrl}/login`, credentials).pipe(
       tap(response => {
         this.tokenService.setToken(response.token);
-        const userId = this.extractIdFromToken(response.token);
+        const payload = JSON.parse(atob(response.token.split('.')[1]));
+        const userId = payload.usuario_id;
+        const role   = payload.usuario_role;
+
         if (userId) {
           localStorage.setItem(this.USER_ID_KEY, String(userId));
-          // Fetcheamos el usuario y lo guardamos en localStorage
-          this.getUserById(String(userId)).subscribe(user => {
+          // Guarda role inmediatamente desde JWT — sin esperar HTTP
+          this.tokenService.setUser(JSON.stringify({ id: userId, role }));
+          // Actualiza con datos completos en segundo plano
+          this.getUserById(userId).subscribe(user => {
             this.tokenService.setUser(JSON.stringify(user));
           });
         }
       })
     );
   }
-
+  
   logout(): void {
     this.tokenService.clearSession();
     localStorage.removeItem(this.USER_ID_KEY);

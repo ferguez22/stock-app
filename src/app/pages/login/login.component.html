@@ -8,9 +8,11 @@
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
             <!-- Mensaje de error -->
-            <div *ngIf="errorMessage" class="alert alert-danger">
-                {{ errorMessage }}
-            </div>
+            @if (errorMessage) {
+                <div class="alert alert-danger">
+                    {{ errorMessage }}
+                </div>
+            }
 
             <!-- Campo Email -->
             <div class="form-group mb-3">
@@ -21,11 +23,16 @@
                         [ngClass]="{'is-invalid': loginForm.get('email')?.invalid && loginForm.get('email')?.touched}"
                         placeholder="correo@ejemplo.com">
                 </div>
-                <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
-                    class="text-danger mt-1">
-                    <small *ngIf="loginForm.get('email')?.errors?.['required']">El email es obligatorio</small>
-                    <small *ngIf="loginForm.get('email')?.errors?.['email']">Ingresa un email válido</small>
-                </div>
+                @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+                    <div class="text-danger mt-1">
+                        @if (loginForm.get('email')?.errors?.['required']) {
+                            <small>El email es obligatorio</small>
+                        }
+                        @if (loginForm.get('email')?.errors?.['email']) {
+                            <small>Ingresa un email válido</small>
+                        }
+                    </div>
+                }
             </div>
 
             <!-- Campo Password -->
@@ -37,18 +44,25 @@
                         [ngClass]="{'is-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}"
                         placeholder="********">
                 </div>
-                <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-                    class="text-danger mt-1">
-                    <small *ngIf="loginForm.get('password')?.errors?.['required']">La contraseña es obligatoria</small>
-                    <small *ngIf="loginForm.get('password')?.errors?.['minlength']">La contraseña debe tener al menos 6
+                @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+                    <div class="text-danger mt-1">
+                        @if (loginForm.get('password')?.errors?.['required']) {
+                            <small>La contraseña es obligatoria</small>
+                        }
+                        @if (loginForm.get('password')?.errors?.['minlength']) {
+                            <small>La contraseña debe tener al menos 6
                         caracteres</small>
-                </div>
+                        }
+                    </div>
+                }
             </div>
 
             <!-- Botón de inicio de sesión -->
             <button type="submit" class="btn btn-primary w-100" [disabled]="isLoading">
-                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"
-                    aria-hidden="true"></span>
+                @if (isLoading) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status"
+                        aria-hidden="true"></span>
+                }
                 <span>Iniciar sesión</span>
             </button>
         </form>
