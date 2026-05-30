@@ -22,15 +22,18 @@ export class TransactionService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<ITransaction[]> {
-    return this.http.get<TransactionResponse>(this.apiUrl).pipe(
-      tap(response => console.log('Respuesta de API:', response)),
-      map(response => response?.transactions ?? []),
-      catchError(error => {
-        console.error('Error en TransactionService.getAll:', error);
-        return of([]);
-      })
-    );
-  }
+  return this.http.get<IApiResponse<ITransaction[]>>(this.apiUrl).pipe(
+    tap(response => console.log('Respuesta de API:', response)),
+    map(response => {
+      if (!response.success || !response.data) return [];
+      return response.data;
+    }),
+    catchError(error => {
+      console.error('Error en TransactionService.getAll:', error);
+      return of([]);
+    })
+  );
+}
 
   create(transaction: ITransactionCreate): Observable<ITransaction> {
     return this.http.post<any>(this.apiUrl, transaction).pipe(
