@@ -7,11 +7,6 @@ import { ITransaction, ITransactionCreate } from '../interfaces/itransaction.int
 import { IApiResponse } from '../interfaces/iresponse.interface';
 import { tap } from 'rxjs/operators';
 
-interface TransactionResponse {
-  message: string;
-  transactions?: ITransaction[];
-}
-
 @Injectable({
   providedIn: 'root'
 })
