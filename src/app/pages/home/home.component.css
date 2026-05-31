@@ -2,10 +2,10 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding: 20px;
+    padding: var(--page-padding);
     overflow-y: auto;
-    background-color: #f5f5f5;
-    border-radius: 8px;
+    background-color: var(--color-bg);
+    border-radius: var(--radius-md);
     box-sizing: border-box;
 }
 
@@ -14,40 +14,39 @@
 }
 
 .header h2 {
-    font-family: 'Rowdies', sans-serif;
-    color: #333;
+    font-family: var(--font-brand);
+    color: var(--color-text);
 }
 
-/* Grid de dashboard */
+/* Grid dashboard */
 .dashboard-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
-    gap: 20px;
+    gap: var(--space-5);
     height: calc(100% - 60px);
 }
 
-/* Tarjetas */
 .dashboard-card {
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    background-color: var(--color-bg-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--page-padding);
     display: flex;
     flex-direction: column;
     overflow: hidden;
 }
 
 .card-title {
-    font-size: 1.2rem;
+    font-size: var(--text-lg);
     font-weight: 600;
-    margin-bottom: 15px;
-    color: #333;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+    margin-bottom: var(--space-4);
+    color: var(--color-text);
+    border-bottom: 1px solid var(--color-border-light);
+    padding-bottom: var(--space-2);
 }
 
-/* Tarjeta de bienvenida */
+/* Bienvenida */
 .welcome-card {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
@@ -55,32 +54,32 @@
 .user-greeting {
     display: flex;
     align-items: center;
-    margin-top: 20px;
+    margin-top: var(--space-5);
 }
 
 .avatar-circle {
-    color: #6c757d;
-    margin-right: 15px;
+    color: var(--color-text-muted);
+    margin-right: var(--space-4);
     background-color: rgba(255, 255, 255, 0.6);
     width: 70px;
     height: 70px;
-    border-radius: 50%;
+    border-radius: var(--radius-pill);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .greeting-text h4 {
-    font-size: 1.2rem;
-    margin-bottom: 5px;
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-1);
 }
 
 .greeting-text p {
-    font-size: 0.9rem;
+    font-size: var(--text-base);
     margin-bottom: 0;
 }
 
-/* Tarjeta de estadísticas */
+/* Stats */
 .stats-card {
     background: linear-gradient(135deg, #2980b9 0%, #6dd5fa 100%);
     color: white;
@@ -94,7 +93,7 @@
 .stats-content {
     display: flex;
     justify-content: space-around;
-    margin: 20px 0;
+    margin: var(--space-5) 0;
 }
 
 .stat-item {
@@ -105,32 +104,32 @@
 }
 
 .stat-info h4 {
-    font-size: 2.2rem;
-    margin: 10px 0 0;
+    font-size: var(--text-3xl);
+    margin: var(--space-2) 0 0;
 }
 
 .stat-info p {
-    font-size: 0.9rem;
+    font-size: var(--text-base);
     margin: 0;
     opacity: 0.8;
 }
 
-/* Tarjeta de productos */
+/* Productos recientes */
 .products-card {
-    background-color: white;
+    background-color: var(--color-bg-card);
 }
 
 .recent-products {
     overflow-y: auto;
-    margin-top: 10px;
+    margin-top: var(--space-2);
 }
 
 .product-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
+    padding: var(--space-2);
+    border-bottom: 1px solid var(--color-border-light);
 }
 
 .product-item:last-child {
@@ -147,11 +146,44 @@
 }
 
 .product-type {
-    font-size: 0.8rem;
-    color: #6c757d;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
 }
 
-/* Tarjeta de acciones */
+/* Transacciones recientes */
+.transactions-card {
+    background-color: var(--color-bg-card);
+}
+
+.recent-transactions {
+    overflow-y: auto;
+    margin-top: var(--space-2);
+    max-height: 220px;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-2);
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.transaction-item:last-child {
+    border-bottom: none;
+}
+
+.transaction-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.transaction-time {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+}
+
+/* Acciones rápidas */
 .actions-card {
     background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
     color: white;
@@ -165,18 +197,18 @@
 .quick-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: var(--space-2);
     justify-content: space-around;
-    margin-top: 20px;
+    margin-top: var(--space-5);
 }
 
 .btn-action {
     background-color: rgba(255, 255, 255, 0.2);
     border: none;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     color: white;
-    padding: 15px;
-    transition: all 0.2s;
+    padding: var(--space-4);
+    transition: all var(--transition-fast);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -189,42 +221,39 @@
 }
 
 .btn-action i {
-    margin-bottom: 8px;
+    margin-bottom: var(--space-2);
 }
 
 .btn-action span {
-    font-size: 0.85rem;
+    font-size: var(--text-sm);
 }
 
-/* Añadir estos estilos al archivo CSS existente */
-
-/* Estilos para la tarjeta de bienvenida con acciones rápidas */
 .actions-subtitle {
-    font-size: 1rem;
-    margin-top: 10px;
-    padding-top: 10px;
+    font-size: var(--text-md);
+    margin-top: var(--space-2);
+    padding-top: var(--space-2);
     border-top: 1px solid rgba(0, 0, 0, 0.1);
-    color: #666;
+    color: var(--color-text-secondary);
 }
 
 .user-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 10px;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
 }
 
 .btn-action-sm {
     background-color: rgba(0, 0, 0, 0.05);
     border: none;
-    border-radius: 8px;
-    padding: 8px 12px;
-    color: #333;
-    font-size: 0.85rem;
-    transition: all 0.2s;
+    border-radius: var(--radius-md);
+    padding: var(--space-2) var(--space-3);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    transition: all var(--transition-fast);
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-2);
 }
 
 .btn-action-sm:hover {
@@ -233,52 +262,18 @@
 }
 
 .btn-action-sm i {
-    font-size: 1rem;
+    font-size: var(--text-md);
 }
 
 .logout-btn {
-    background-color: rgba(220, 53, 69, 0.1);
-    color: #dc3545;
+    background-color: var(--color-danger-light);
+    color: var(--color-danger);
 }
 
 .logout-btn:hover {
-    background-color: rgba(220, 53, 69, 0.2);
+    background-color: rgba(229, 62, 62, 0.2);
 }
 
-/* Estilos para la tarjeta de transacciones */
-.transactions-card {
-    background-color: white;
-}
-
-.recent-transactions {
-    overflow-y: auto;
-    margin-top: 10px;
-    max-height: 220px;
-}
-
-.transaction-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-}
-
-.transaction-item:last-child {
-    border-bottom: none;
-}
-
-.transaction-details {
-    display: flex;
-    flex-direction: column;
-}
-
-.transaction-time {
-    font-size: 0.75rem;
-    color: #6c757d;
-}
-
-/* Responsividad */
 @media (max-width: 992px) {
     .dashboard-grid {
         grid-template-columns: 1fr;

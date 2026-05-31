@@ -1,70 +1,67 @@
-/* 1. Estructura General */
 .historial-container {
-    padding: 24px;
+    padding: var(--space-6);
     height: 100%;
     overflow-y: auto;
-    background-color: #fbfbfb;
-    /* Fondo ligeramente gris para que resalten las tarjetas blancas */
+    background-color: var(--color-bg);
 }
 
 .header {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: var(--space-7);
 }
 
 .header h2 {
-    font-family: 'Rowdies', sans-serif;
-    color: #333;
-    font-size: 1.8rem;
-    margin-bottom: 5px;
+    font-family: var(--font-brand);
+    color: var(--color-text);
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-1);
 }
 
 .header p {
-    font-size: 0.9rem;
-    color: #888;
+    font-size: var(--text-base);
+    color: var(--color-text-light);
 }
 
-/* 2. Filtros Pro (Buscador flexible + Botones compactos) */
+/* Filtros */
 .filters-container {
-    background: white;
-    border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    background: var(--color-bg-card);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    box-shadow: var(--shadow-xs);
     display: flex;
-    gap: 15px;
+    gap: var(--space-4);
     align-items: center;
-    margin-bottom: 25px;
-    border: 1px solid #f0f0f0;
+    margin-bottom: var(--space-6);
+    border: 1px solid var(--color-border-light);
 }
 
 .filters-container .input-group {
     flex: 1;
-    /* El buscador ocupa el espacio sobrante */
 }
 
 .filters-container .form-control:focus {
     box-shadow: none;
-    border-color: #333;
+    border-color: var(--color-text);
 }
 
 .filter-buttons {
     display: flex;
-    gap: 8px;
+    gap: var(--space-2);
 }
 
 .filter-buttons .btn {
-    border-radius: 20px;
+    border-radius: var(--radius-pill);
     font-weight: 500;
-    font-size: 0.85rem;
+    font-size: var(--text-sm);
     padding: 6px 16px;
-    transition: all 0.2s;
+    transition: all var(--transition-fast);
 }
 
-/* 3. Sección "Fuera de Almacén" (NUEVO) */
+/* Sección fuera de almacén */
 .section-title {
-    font-size: 0.8rem;
-    color: #999;
-    margin: 20px 0 12px;
+    font-size: var(--text-xs);
+    color: var(--color-text-light);
+    margin: var(--space-5) 0 var(--space-3);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -73,139 +70,120 @@
 .out-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 12px;
-    margin-bottom: 30px;
+    gap: var(--space-3);
+    margin-bottom: var(--space-7);
 }
 
 .out-card {
-    background: white;
-    border-radius: 12px;
-    border: 1px solid #f0f0f0;
-    padding: 12px 15px;
+    background: var(--color-bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border-light);
+    padding: var(--space-3) var(--space-4);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .out-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-sm);
 }
 
 .out-card-name {
     font-weight: 600;
-    font-size: 0.85rem;
-    color: #444;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
 }
 
 .out-card-count {
-    background: #ff4757;
+    background: var(--color-danger);
     color: white;
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
     padding: 2px 8px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
 }
 
-/* 4. Tabla Desktop & Tooltips */
+/* Tabla */
 .table-responsive {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    border: 1px solid #f0f0f0;
+    background: var(--color-bg-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xs);
+    border: 1px solid var(--color-border-light);
 }
 
 .table thead th {
-    background: #f8f9fa;
-    color: #888;
-    font-size: 0.75rem;
+    background: var(--color-bg-input);
+    color: var(--color-text-muted);
+    font-size: var(--text-xs);
     text-transform: uppercase;
-    padding: 15px;
-    border-bottom: 2px solid #eee;
+    padding: var(--space-4);
+    border-bottom: 2px solid var(--color-border);
 }
 
 .product-cell {
     position: relative;
     cursor: help;
     font-weight: 600;
-    color: #333;
+    color: var(--color-text);
 }
 
-/* Tooltip mejorado */
 .product-tooltip {
     display: none;
     position: absolute;
     bottom: 120%;
     left: 0;
-    background: white;
+    background: var(--color-bg-card);
     width: 250px;
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    border: 1px solid #eee;
-    z-index: 1000;
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--color-border-light);
+    z-index: var(--z-modal);
 }
 
 .product-cell:hover .product-tooltip {
     display: block;
 }
 
-/* 5. Vista Móvil (Cards) */
+/* Cards móvil */
 .transactions-grid {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-3);
 }
 
 .transaction-card {
-    background: white;
-    border-radius: 12px;
-    padding: 16px;
-    border: 1px solid #f0f0f0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+    background: var(--color-bg-card);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-xs);
 }
 
 .transaction-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
-    font-size: 0.8rem;
+    margin-bottom: var(--space-2);
+    font-size: var(--text-sm);
 }
 
 .product-name {
     font-weight: 700;
-    font-size: 1rem;
+    font-size: var(--text-md);
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: var(--space-1);
 }
 
 .badge {
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     padding: 5px 10px;
 }
 
-/* 6. Responsive (Tu especialidad) */
-.desktop-view {
-    display: block;
-}
-
-.mobile-view {
-    display: none;
-}
-
 @media (max-width: 992px) {
-    .desktop-view {
-        display: none;
-    }
-
-    .mobile-view {
-        display: block;
-    }
-
     .historial-container {
-        padding: 15px;
+        padding: var(--page-padding-mobile);
         padding-bottom: 90px;
-        /* Seguridad para tu navbar móvil */
     }
 
     .filters-container {
@@ -214,18 +192,12 @@
     }
 
     .header h2 {
-        font-size: 1.5rem;
+        font-size: var(--text-xl);
     }
 }
 
 @media (max-width: 576px) {
     .out-cards-grid {
         grid-template-columns: 1fr 1fr;
-        /* Dos columnas en móvil pequeño */
-    }
-
-    .filter-buttons .btn-text {
-        display: none;
-        /* Solo iconos en botones para ahorrar espacio */
     }
 }

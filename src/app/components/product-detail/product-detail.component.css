@@ -1,3 +1,4 @@
+/* product-detail.component.css */
 .modal-backdrop {
     position: fixed;
     top: 0;
@@ -8,76 +9,76 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1050;
-    padding: 20px;
+    z-index: var(--z-modal);
+    padding: var(--page-padding);
 }
 
 .modal-panel {
-    background: white;
-    border-radius: 12px;
+    background: var(--color-bg-card);
+    border-radius: var(--radius-lg);
     width: 100%;
     max-width: 460px;
     max-height: 85vh;
     overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-xl);
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 20px;
-    border-bottom: 1px solid #eee;
+    padding: var(--space-4) var(--page-padding);
+    border-bottom: 1px solid var(--color-border-light);
 }
 
 .modal-title {
-    font-size: 1.1rem;
+    font-size: var(--text-lg);
     font-weight: 600;
     margin: 0;
-    color: #333;
+    color: var(--color-text);
 }
 
 .btn-close {
     background: none;
     border: none;
-    font-size: 1rem;
-    color: #999;
+    font-size: var(--text-md);
+    color: var(--color-text-light);
     cursor: pointer;
     padding: 4px 8px;
-    border-radius: 6px;
-    transition: all 0.2s;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
 }
 
 .btn-close:hover {
-    background: #f1f1f1;
-    color: #333;
+    background: var(--color-bg-input);
+    color: var(--color-text);
 }
 
 .modal-badges {
     display: flex;
-    gap: 8px;
-    padding: 12px 20px;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--page-padding);
 }
 
 .badge-status {
     color: white;
     padding: 4px 14px;
-    border-radius: 20px;
-    font-size: 0.8rem;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-sm);
     font-weight: 500;
 }
 
 .badge-category {
-    background: #0dcaf0;
+    background: var(--color-info);
     color: white;
     padding: 4px 14px;
-    border-radius: 20px;
-    font-size: 0.8rem;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-sm);
     font-weight: 500;
 }
 
 .modal-body {
-    padding: 8px 20px 20px;
+    padding: var(--space-2) var(--page-padding) var(--page-padding);
 }
 
 .info-row {
@@ -88,77 +89,77 @@
 }
 
 .info-label {
-    font-size: 0.85rem;
-    color: #888;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
     flex-shrink: 0;
-    margin-right: 12px;
+    margin-right: var(--space-3);
 }
 
 .info-value {
-    font-size: 0.9rem;
-    color: #333;
+    font-size: var(--text-base);
+    color: var(--color-text);
     text-align: right;
 }
 
 .info-value.code {
-    font-family: monospace;
-    background: #f5f5f5;
+    font-family: var(--font-mono);
+    background: var(--color-bg-input);
     padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
+    border-radius: var(--radius-xs);
+    font-size: var(--text-sm);
 }
 
 .info-value.stock {
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: var(--text-lg);
 }
 
 .info-divider {
     height: 1px;
-    background: #eee;
-    margin: 10px 0;
+    background: var(--color-border-light);
+    margin: var(--space-2) 0;
 }
 
 .info-section-title {
-    font-size: 0.85rem;
-    color: #888;
-    margin: 0 0 8px;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin: 0 0 var(--space-2);
 }
 
 .location-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    gap: var(--space-2);
 }
 
 .location-item {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 8px;
+    background: var(--color-bg-input);
+    border-radius: var(--radius-md);
+    padding: var(--space-2);
     text-align: center;
 }
 
 .location-label {
     display: block;
-    font-size: 0.7rem;
-    color: #999;
+    font-size: var(--text-xs);
+    color: var(--color-text-light);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .location-value {
     display: block;
-    font-size: 1rem;
+    font-size: var(--text-md);
     font-weight: 600;
-    color: #333;
+    color: var(--color-text);
     margin-top: 2px;
 }
 
 .info-dates {
     display: flex;
     justify-content: space-between;
-    font-size: 0.75rem;
-    color: #aaa;
+    font-size: var(--text-xs);
+    color: var(--color-text-light);
 }
 
 @media (max-width: 480px) {

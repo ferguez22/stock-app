@@ -1,7 +1,8 @@
+/* product-table.component.css */
 .table-responsive {
     margin-top: 1rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
+    box-shadow: var(--shadow-xs);
+    border-radius: var(--radius-sm);
 }
 
 .table {
@@ -10,7 +11,7 @@
 
 .btn-group {
     display: flex;
-    gap: 5px;
+    gap: var(--space-1);
 }
 
 .stock-info {
@@ -18,7 +19,7 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 15px;
+    gap: var(--space-4);
 }
 
 .stock-in,
@@ -30,8 +31,8 @@
 
 .stock-in small,
 .stock-out small {
-    font-size: 0.7rem;
-    color: #6c757d;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
 }
 
 .badge {
