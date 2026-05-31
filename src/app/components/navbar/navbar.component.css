@@ -1,5 +1,5 @@
 .navbar {
-    transition: all 0.3s ease;
+    transition: all var(--transition-slow);
     width: 100%;
     color: white;
 }
@@ -9,7 +9,7 @@
 }
 
 .navbar-brand {
-    transition: all 0.3s ease;
+    transition: all var(--transition-slow);
     white-space: nowrap;
     overflow: hidden;
     color: white;
@@ -19,120 +19,126 @@
     position: absolute;
     right: -15px;
     top: 20px;
-    background: #fff;
-    border-radius: 50%;
+    background: var(--color-bg-card);
+    border-radius: var(--radius-pill);
     width: 30px;
     height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-sm);
     border: none;
     padding: 0;
-    z-index: 1000;
-    /* Añadimos un z-index alto para asegurar que esté por encima */
+    z-index: var(--z-sidebar);
+    transition: all var(--transition-base);
 }
 
-/* También podemos mejorar la sombra para darle más presencia */
 .toggle-btn:hover {
     background: #f8f9fa;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-md);
     transform: scale(1.05);
 }
 
-
-/* Efecto hover para enlaces en la navbar */
 .nav-link {
     position: relative;
-    transition: all 0.3s ease;
-    border-radius: 6px;
-    background-color: rgba(255, 255, 255, 0.079);
+    transition: all var(--transition-base);
+    border-radius: var(--radius-sm);
+    background-color: rgba(255, 255, 255, 0.07);
     padding: 10px 15px;
-    font-size: 1.2rem;
+    font-size: var(--text-md);
     display: flex;
-    /* Añadir display flex */
     align-items: center;
-    /* Alinear elementos verticalmente al centro */
 }
 
-/* Efecto cuando se pasa el cursor sobre el enlace */
-
 .nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.113);
+    background-color: rgba(255, 255, 255, 0.11);
     transform: translateX(5px);
 }
 
-/* Efecto para los iconos dentro del enlace */
 .nav-link i {
-    transition: all 0.3s ease;
+    transition: all var(--transition-base);
     margin-right: 12px;
     width: 20px;
     text-align: center;
     display: inline-flex;
-    /* Ayuda con la alineación */
     align-items: center;
-    /* Centra el icono verticalmente */
     justify-content: center;
-    /* Centra el icono horizontalmente */
 }
 
 .nav-link:hover i {
-    color: #0d6efd;
+    color: var(--color-primary);
     transform: scale(1.2);
 }
 
 .nav-link:hover span {
     font-weight: 500;
-    color: #0d6efd;
-}
-
-.nav-link i {
-    transition: all 0.3s ease;
-    margin-right: 12px; 
-    width: 20px;
-    text-align: center; 
-}
-
-.navbar.collapsed .nav-link i {
-    margin-right: 0; 
-}
-
-.navbar.collapsed .nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.06);
-    transform: translateX(3px);
-    border-radius: 50%;
-}
-
-.navbar.collapsed .nav-link:hover i {
-    transform: scale(1.3);
-    color: #0d6efd;
+    color: var(--color-primary);
 }
 
 .nav-link::before {
-    content: "";
+    content: '';
     position: absolute;
     left: -10px;
     top: 50%;
     transform: translateY(-50%);
     width: 0;
     height: 60%;
-    background-color: #0d6efd;
-    border-radius: 3px;
-    transition: width 0.3s ease;
+    background-color: var(--color-primary);
+    border-radius: var(--radius-xs);
+    transition: width var(--transition-base);
 }
 
 .nav-link:hover::before {
     width: 3px;
 }
 
-/* Estilos para la navbar móvil */
+/* Collapsed state */
+.navbar.collapsed .nav-link i {
+    margin-right: 0;
+}
+
+.navbar.collapsed .nav-link {
+    justify-content: center;
+    padding: 0.5rem;
+}
+
+.navbar.collapsed .nav-link:hover {
+    background-color: rgba(255, 255, 255, .06);
+    transform: translateX(3px);
+    border-radius: var(--radius-pill);
+}
+
+.navbar.collapsed .nav-link:hover i {
+    transform: scale(1.3);
+    color: var(--color-primary);
+}
+
+/* Text animation */
+.nav-text {
+    transition: all var(--transition-base);
+    opacity: 1;
+    width: auto;
+    overflow: hidden;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+}
+
+.collapsed-text {
+    opacity: 0;
+    width: 0;
+    margin-left: 0 !important;
+    transform: translateX(-10px);
+}
+
+/* ── Mobile navbar ── */
 .navbar-mobile {
     display: flex;
     justify-content: space-around;
     align-items: center;
     width: 100%;
     height: 100%;
-    background-color: #333b44;
+    background-color: var(--color-sidebar);
     color: white;
     padding: 0;
 }
@@ -146,17 +152,16 @@
     text-decoration: none;
     flex: 1;
     padding: 8px 0;
-    transition: all 0.2s ease;
-    font-size: 0.8rem;
+    transition: all var(--transition-fast);
+    font-size: var(--text-sm);
 }
 
 .mobile-nav-link i {
     font-size: 1.4rem;
-    margin-bottom: 4px;
+    margin-bottom: var(--space-1);
 }
 
 .mobile-nav-link.active {
-    color: #fff;
     background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -177,37 +182,9 @@
     .mobile-nav-text {
         display: none;
     }
-    
+
     .mobile-nav-link i {
         font-size: 1.6rem;
         margin-bottom: 0;
     }
-}
-
-.nav-text {
-    transition: all 0.3s ease;
-    opacity: 1;
-    width: auto;
-    overflow: hidden;
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-}
-
-.collapsed-text {
-    opacity: 0;
-    width: 0;
-    margin-left: 0 !important;
-    transform: translateX(-10px);
-}
-
-.navbar.collapsed .nav-link i {
-    margin-right: 0;
-    transition: all 0.3s ease;
-}
-
-.navbar.collapsed .nav-link {
-    justify-content: center;
-    display: flex;
-    padding: 0.5rem;
 }
