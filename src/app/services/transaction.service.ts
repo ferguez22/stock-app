@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, throwError, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { ITransaction, ITransactionCreate } from '../interfaces/itransaction.interface';
+import { ITransaction } from '../interfaces/itransaction.interface';
 import { IApiResponse } from '../interfaces/iresponse.interface';
 import { tap } from 'rxjs/operators';
 
