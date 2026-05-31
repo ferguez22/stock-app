@@ -58,8 +58,8 @@ export class AuthService {
 
   // --- GESTIÓN DE USUARIOS ---
 
-  getUsers(): Observable<IUser[]> {
-    return this.http.get<IApiResponse<IUser[]>>(this.usersUrl).pipe(
+  getAllUsers(): Observable<IUser[]> {
+    return this.http.get<IApiResponse<IUser[]>>(this.authUrl).pipe(
       map(response => {
         if (!response.success || !response.data) {
           throw new Error(response.message || 'Error al obtener usuarios');
@@ -104,21 +104,21 @@ export class AuthService {
     );
   }
 
+  updateUser(id: number | string, data: Partial<IUser>): Observable<any> {
+    return this.http.put<IApiResponse<any>>(`${this.authUrl}/${id}`, data).pipe(
+      map(response => {
+        if (!response.success) throw new Error(response.message || 'Error al actualizar');
+        return response;
+      }),
+      catchError(error => throwError(() => error))
+    );
+  }
+
+
   // --- UTILIDADES ---
 
   getCurrentUserId(): number | null {
     const id = localStorage.getItem(this.USER_ID_KEY);
     return id ? parseInt(id, 10) : null;
-  }
-
-  private extractIdFromToken(token: string): number | null {
-    if (!token) return null;
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.id || payload.usuario_id || null;
-    } catch (error) {
-      console.error('Error extrayendo ID del token:', error);
-      return null;
-    }
   }
 }
