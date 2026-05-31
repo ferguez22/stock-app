@@ -30,18 +30,20 @@ export class TransactionService {
   );
 }
 
-  create(transaction: ITransactionCreate): Observable<ITransaction> {
-    return this.http.post<any>(this.apiUrl, transaction).pipe(
-      map(response => {
-        if (response?.transaction) return response.transaction;
+  create(transaction: ITransaction): Observable<any> {
+  return this.http.post<any>(this.apiUrl, transaction).pipe(
+    map(response => {
+      if (!response.success) {
         throw new Error(response?.message || 'Error al crear la transacción');
-      }),
-      catchError(error => {
-        console.error('Error en TransactionService.create:', error);
-        return throwError(() => error);
-      })
-    );
-  }
+      }
+      return response;
+    }),
+    catchError(error => {
+      console.error('Error en TransactionService.create:', error);
+      return throwError(() => error);
+    })
+  );
+}
 
   getUserOutProducts(userId: number | string): Observable<any[]> {
     return this.http.get<IApiResponse<any[]>>(`${this.apiUrl}/user/${userId}/out`).pipe(
