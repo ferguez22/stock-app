@@ -42,7 +42,7 @@ export class HomeComponent implements OnInit {
     private router: Router
   ) {}
   
-@HostListener('window:resize', ['$event'])
+@HostListener('window:resize')
 
 onResize() {
     this.checkScreenSize();
@@ -60,7 +60,7 @@ onResize() {
 
   loadUserData(): void {
     const cachedUser = this.tokenService.getUser();
-    if (cachedUser) {
+    if (cachedUser?.name) {
       this.currentUser = cachedUser;
     } else {
       const userId = this.authService.getCurrentUserId();
