@@ -67,6 +67,23 @@
             </div>
             <span class="ms-2">Calculando estadísticas...</span>
         </div>     }
+        <!-- Filtros de ordenación -->
+        <div class="sort-container mb-3">
+            <div class="d-flex align-items-center justify-content-center gap-2">
+                <label class="sort-label"><i class="fas fa-sort me-1"></i>Ordenar por:</label>
+                <select class="form-select form-select-sm sort-select" [(ngModel)]="sortBy" (change)="applySearch()">
+                    <option value="name-asc">Nombre A → Z</option>
+                    <option value="name-desc">Nombre Z → A</option>
+                    <option value="category-asc">Categoría A → Z</option>
+                    <option value="stock-asc">Stock: menor primero</option>
+                    <option value="stock-desc">Stock: mayor primero</option>
+                    <option value="date-newest">Creación: más recientes</option>
+                    <option value="date-oldest">Creación: más antiguos</option>
+                    <option value="updated-newest">Actualización: más recientes</option>
+                    <option value="updated-oldest">Actualización: más antiguos</option>
+                </select>
+            </div>
+        </div>
 
     <!-- Barra de búsqueda -->
     <div class="search-container">
@@ -111,40 +128,50 @@
         </app-product-table>
     </div>
 
-    <!-- Vista móvil (grid) -->
+    <!-- Vista móvil (lista compacta) -->
     <div class="mobile-view" [hidden]="isLoading || error || filteredProducts.length === 0">
-        <div class="products-grid">
-            @for (product of filteredProducts; track product._id) {
-            <div class="product-card">
-                <div class="product-header">
-                    <span class="product-title">{{ product.item }}</span>
-                    <span class="product-code">{{ product.code }}</span>
-                </div>
-                <div class="product-details">
-                    <div class="detail-row">
-                        <span class="detail-label">Stock:</span>
-                        <span class="detail-value">{{ product.stock }}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Tipo:</span>
-                        <span class="detail-value">{{ product.type }}</span>
+        <div class="products-list">
+            @for (product of filteredProducts; track product.id) {
+            <div class="product-list-item">
+                <div class="product-list-info">
+                    <span class="product-list-name">{{ product.item }}</span>
+                    <div class="product-list-meta">
+                        <span class="product-list-brand">{{ product.brand }}</span>
+                        <span class="product-list-category">{{ product.category_name }}</span>
                     </div>
                 </div>
-                <div class="product-actions">
-                    <button class="btn btn-sm btn-info" (click)="handleViewProduct(product)">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    @if (userRole === 'admin') {
-                    <button class="btn btn-sm btn-primary" (click)="handleEditProduct(product)">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger" (click)="handleDeleteProduct(product)">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    }
+                <div class="product-list-right">
+                    <span class="badge" [ngClass]="{
+                            'bg-danger': product.stock <= 2,
+                            'bg-warning': product.stock > 2 && product.stock <= 5,
+                            'bg-success': product.stock > 5
+                        }">{{ product.stock }}</span>
+                    <div class="product-list-actions">
+                        <button class="btn btn-sm btn-info" (click)="handleViewProduct(product)">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        @if (userRole === 'admin') {
+                        <button class="btn btn-sm btn-primary" (click)="handleEditProduct(product)">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" (click)="handleDeleteProduct(product)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        }
+                    </div>
                 </div>
             </div>
             }
         </div>
     </div>
+
+    <!-- Modal detalle de producto -->
+    <app-product-detail [product]="selectedProduct" [visible]="showProductDetail" (close)="closeProductDetail()">
+    </app-product-detail>
+
+    <!-- Modal formulario nuevo producto -->
+    <app-product-form [visible]="showProductForm" [product]="editingProduct" (close)="closeProductForm()"
+        (save)="onProductSaved($event)">
+    </app-product-form>
+
 </div>

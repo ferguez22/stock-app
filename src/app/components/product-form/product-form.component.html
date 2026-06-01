@@ -1,0 +1,117 @@
+@if (visible) {
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+    <div class="modal-panel">
+
+        <div class="modal-header">
+            <h3 class="modal-title">{{ product ? 'Editar Producto' : 'Nuevo Producto' }}</h3>
+            <button class="btn-close-modal" (click)="onClose()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="modal-body">
+
+            <!-- Fila 1: Marca y Categoría -->
+            <div class="form-row">
+                <div class="form-field">
+                    <label>Marca *</label>
+                    <input type="text" formControlName="brand" placeholder="Ej: Sony, Canon...">
+                    @if (isInvalid('brand')) {
+                    <span class="field-error">La marca es obligatoria</span>
+                    }
+                </div>
+                <div class="form-field">
+                    <label>Categoría *</label>
+                    @if (isLoadingCategories) {
+                    <select disabled>
+                        <option>Cargando...</option>
+                    </select>
+                    } @else {
+                    <select formControlName="category_id">
+                        <option value="">Selecciona categoría</option>
+                        @for (cat of categories; track cat.id) {
+                        <option [value]="cat.id">{{ cat.name }}</option>
+                        }
+                    </select>
+                    }
+                    @if (isInvalid('category_id')) {
+                    <span class="field-error">Selecciona una categoría</span>
+                    }
+                </div>
+            </div>
+
+            <!-- Fila 2: Nombre del producto -->
+            <div class="form-field">
+                <label>Nombre del producto *</label>
+                <input type="text" formControlName="item" placeholder="Ej: FX3, RONIN RS3...">
+                @if (isInvalid('item')) {
+                <span class="field-error">El nombre es obligatorio</span>
+                }
+            </div>
+
+            <!-- Fila 3: Descripción -->
+            <div class="form-field">
+                <label>Descripción</label>
+                <textarea formControlName="description" rows="2" placeholder="Detalles del producto..."></textarea>
+            </div>
+
+            <!-- Fila 4: Estado, Stock, Stock mínimo -->
+            <div class="form-row triple">
+                <div class="form-field">
+                    <label>Estado *</label>
+                    <select formControlName="status">
+                        <option value="BUENO">Bueno</option>
+                        <option value="REGULAR">Regular</option>
+                        <option value="MALO">Malo</option>
+                        <option value="BAJA">Baja</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label>Stock *</label>
+                    <input type="number" formControlName="stock" min="0">
+                </div>
+                <div class="form-field">
+                    <label>Stock mínimo</label>
+                    <input type="number" formControlName="min_stock" min="0">
+                </div>
+            </div>
+
+            <!-- Fila 5: Precio -->
+            <div class="form-field">
+                <label>Precio (€)</label>
+                <input type="number" formControlName="price" min="0" step="0.01" placeholder="0.00">
+            </div>
+
+            <!-- Fila 6: Ubicación -->
+            <p class="section-title">Ubicación en almacén</p>
+            <div class="form-row triple">
+                <div class="form-field">
+                    <label>Pasillo</label>
+                    <input type="text" formControlName="aisle" placeholder="Ej: 1">
+                </div>
+                <div class="form-field">
+                    <label>Balda</label>
+                    <input type="text" formControlName="shelf" placeholder="Ej: 3">
+                </div>
+                <div class="form-field">
+                    <label>Lado</label>
+                    <select formControlName="side">
+                        <option value="">Sin definir</option>
+                        <option value="IZQ">Izquierda</option>
+                        <option value="DER">Derecha</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="form-actions">
+                <button type="button" class="btn-cancel" (click)="onClose()">Cancelar</button>
+                <button type="submit" class="btn-save">
+                    <i class="fas fa-save me-1"></i>{{ product ? 'Actualizar' : 'Guardar' }}
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+}

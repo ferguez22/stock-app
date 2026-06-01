@@ -1,198 +1,231 @@
 <div class="home-container">
-    <!-- Header general -->
-    <div class="header mb-3">
-        <h2>Panel de Control</h2>
-    </div>
+  <!-- Header general -->
+  <div class="header mb-3">
+    <h2>Panel de Control</h2>
+  </div>
 
-    <!-- Grid principal de 2x2 -->
-    <div class="dashboard-grid">
+  <!-- Grid principal de 2x2 -->
+  <div class="dashboard-grid">
+    <!-- Superior izquierdo: Saludo al usuario y Acciones rápidas -->
+    <div class="dashboard-card welcome-card">
+      <h3 class="card-title">Bienvenido</h3>
 
-        <!-- Superior izquierdo: Saludo al usuario y Acciones rápidas -->
-        <div class="dashboard-card welcome-card">
-            <h3 class="card-title">Bienvenido</h3>
-
-            @if (currentUser) {
-<!-- Solo modificar la parte del saludo para móvil -->
+      @if (currentUser) {
+        <!-- Solo modificar la parte del saludo para móvil -->
 
         <div class="user-greeting mb-3" [class.mobile-greeting]="isMobile">
-            <div class="avatar-circle">
-                <i class="fas fa-user-circle" [class.fa-2x]="isMobile" [class.fa-3x]="!isMobile"></i>
-            </div>
-            <div class="greeting-text">
-                <h4>¡Hola, {{ currentUser.name }}!</h4>
-                <p class="badge" [ngClass]="{
-                    'bg-danger': currentUser.role === 'admin',
-                    'bg-primary': currentUser.role === 'user'
-                }">
-                    {{ currentUser.role }}
-                </p>
-                @if (!isMobile) {
-                <p class="mt-2">{{ getGreetingByTime() }}</p>
-                }
-            </div>
-        </div>
-
-            <!-- Acciones rápidas (movidas de la esquina inferior derecha) -->
-            <div class="quick-actions-container mt-3">
-                <h5 class="actions-subtitle">Acciones Rápidas</h5>
-                <div class="quick-actions user-actions">
-                    <button class="btn btn-action-sm" (click)="createProduct()">
-                        <i class="fas fa-plus-circle"></i>
-                        <span>Nuevo Producto</span>
-                    </button>
-                    <button class="btn btn-action-sm" (click)="scanProduct()">
-                        <i class="fas fa-barcode"></i>
-                        <span>Escanear</span>
-                    </button>
-                    <button class="btn btn-action-sm" (click)="exportData()">
-                        <i class="fas fa-file-export"></i>
-                        <span>Exportar</span>
-                    </button>
-                    <button class="btn btn-action-sm logout-btn" (click)="logout()">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Cerrar Sesión</span>
-                    </button>
-                </div>
-            </div>
-
-            } @else if (!userError) {
-            <div class="loading-user">
-                <div class="spinner-border spinner-border-sm text-primary" role="status">
-                    <span class="visually-hidden">Cargando...</span>
-                </div>
-                <span class="ms-2">Cargando datos de usuario...</span>
-            </div>
-            } @else {
-            <div class="text-danger">
-                <i class="fas fa-exclamation-circle"></i>
-                <span class="ms-2">Error al cargar datos del usuario</span>
-            </div>
+          <div class="avatar-circle">
+            <i
+              class="fas fa-user-circle"
+              [class.fa-2x]="isMobile"
+              [class.fa-3x]="!isMobile"
+            ></i>
+          </div>
+          <div class="greeting-text">
+            <h4>¡Hola, {{ currentUser.name }}!</h4>
+            <p
+              class="badge"
+              [ngClass]="{
+                'bg-danger': currentUser.role === 'admin',
+                'bg-primary': currentUser.role === 'user',
+              }"
+            >
+              {{ currentUser.role }}
+            </p>
+            @if (!isMobile) {
+              <p class="mt-2">{{ getGreetingByTime() }}</p>
             }
+          </div>
         </div>
 
-        <!-- Superior derecho: Estadísticas -->
-        <div class="dashboard-card stats-card">
-            <h3 class="card-title">Estadísticas</h3>
-            <div class="stats-content">
-                <div class="stat-item">
-                    <i class="fas fa-boxes fa-2x"></i>
-                    <div class="stat-info">
-                        <h4>{{ totalProducts || '0' }}</h4>
-                        <p>Productos</p>
-                    </div>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-exchange-alt fa-2x"></i>
-                    <div class="stat-info">
-                        <h4>{{ totalTransactions || '0' }}</h4>
-                        <p>Transacciones</p>
-                    </div>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-cubes fa-2x"></i>
-                    <div class="stat-info">
-                        <h4>{{ totalStockCount || '0' }}</h4>
-                        <p>Total en inventario</p>
-                    </div>
-                </div>
-            </div>
+        <!-- Acciones rápidas (movidas de la esquina inferior derecha) -->
+        <div class="quick-actions-container mt-3">
+          <h5 class="actions-subtitle">Acciones Rápidas</h5>
+          <div class="quick-actions user-actions">
+            <button class="btn btn-action-sm" (click)="createProduct()">
+              <i class="fas fa-plus-circle"></i>
+              <span>Nuevo Producto</span>
+            </button>
+            <button class="btn btn-action-sm" (click)="scanProduct()">
+              <i class="fas fa-barcode"></i>
+              <span>Escanear</span>
+            </button>
+            <button class="btn btn-action-sm" (click)="exportData()">
+              <i class="fas fa-file-export"></i>
+              <span>Exportar</span>
+            </button>
+            <button class="btn btn-action-sm logout-btn" (click)="logout()">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>Cerrar Sesión</span>
+            </button>
+          </div>
         </div>
-
-        <!-- Inferior izquierdo: Productos recientes -->
-        <div class="dashboard-card products-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="card-title mb-0">Productos Recientes</h3>
-                <a [routerLink]="['/inventario']" class="btn btn-sm btn-link">
-                    Ver todos
-                </a>
-            </div>
-
-            @if (isLoading) {
-            <div class="text-center my-3">
-                <div class="spinner-border spinner-border-sm text-primary" role="status">
-                    <span class="visually-hidden">Cargando...</span>
-                </div>
-                <p class="mt-1 small">Cargando productos...</p>
-            </div>
-            } @else if (error) {
-            <div class="alert alert-danger py-2">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                Error al cargar productos
-            </div>
-            } @else {
-            <div class="recent-products">
-                @if (recentProducts.length > 0) {
-                @for (product of recentProducts; track $index) {
-                <div class="product-item">
-                    <div class="product-info">
-                        <span class="product-name">{{ product.item }}</span>
-                        <span class="product-type">{{ product.type }}</span>
-                    </div>
-                    <span class="badge" [ngClass]="{
-                  'bg-danger': product.stock <= 2,
-                  'bg-warning': product.stock > 2 && product.stock <= 5,
-                  'bg-success': product.stock > 5
-                }">
-                        {{ product.stock }}
-                    </span>
-                </div>
-                }
-                } @else {
-                <div class="text-center text-muted my-3">
-                    <i class="fas fa-box-open me-2"></i>
-                    No hay productos registrados
-                </div>
-                }
-            </div>
-            }
+      } @else if (!userError) {
+        <div class="loading-user">
+          <div
+            class="spinner-border spinner-border-sm text-primary"
+            role="status"
+          >
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <span class="ms-2">Cargando datos de usuario...</span>
         </div>
-
-        <!-- Inferior derecho: Transacciones recientes (antes acciones rápidas) -->
-        <div class="dashboard-card transactions-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="card-title mb-0">Transacciones Recientes</h3>
-                <a [routerLink]="['/historial']" class="btn btn-sm btn-link">
-                    Ver todas
-                </a>
-            </div>
-
-            @if (isLoading) {
-            <div class="text-center my-3">
-                <div class="spinner-border spinner-border-sm text-primary" role="status">
-                    <span class="visually-hidden">Cargando...</span>
-                </div>
-                <p class="mt-1 small">Cargando transacciones...</p>
-            </div>
-            } @else if (error) {
-            <div class="alert alert-danger py-2">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                Error al cargar transacciones
-            </div>
-            } @else {
-            <div class="recent-transactions">
-                @if (recentTransactions && recentTransactions.length > 0) {
-                @for (transaction of recentTransactions; track $index) {
-                <div class="transaction-item">
-                    <div class="transaction-details">
-                        <span class="product-name">{{ transaction.product?.item || 'Producto' }}</span>
-                        <span class="transaction-time">{{ transaction.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
-                    </div>
-                    <div class="transaction-type">
-                        <span class="badge" [ngClass]="transaction.type === 'IN' ? 'bg-success' : 'bg-danger'">
-                            <i class="fas" [ngClass]="transaction.type === 'IN' ? 'fa-arrow-down' : 'fa-arrow-up'"></i>
-                            {{ transaction.quantity }}
-                        </span>
-                    </div>
-                </div>
-                }
-                } @else {
-                <div class="text-center text-muted my-3">
-                    <i class="fas fa-exchange-alt me-2"></i>
-                    No hay transacciones recientes
-                </div>
-                }
-            </div>
-            }
+      } @else {
+        <div class="text-danger">
+          <i class="fas fa-exclamation-circle"></i>
+          <span class="ms-2">Error al cargar datos del usuario</span>
         </div>
+      }
     </div>
+
+    <!-- Superior derecho: Estadísticas -->
+    <div class="dashboard-card stats-card">
+      <h3 class="card-title">Estadísticas</h3>
+      <div class="stats-content">
+        <div class="stat-item">
+          <i class="fas fa-boxes fa-2x"></i>
+          <div class="stat-info">
+            <h4>{{ totalProducts || "0" }}</h4>
+            <p>Productos</p>
+          </div>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-exchange-alt fa-2x"></i>
+          <div class="stat-info">
+            <h4>{{ totalTransactions || "0" }}</h4>
+            <p>Transacciones</p>
+          </div>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-cubes fa-2x"></i>
+          <div class="stat-info">
+            <h4>{{ totalStockCount || "0" }}</h4>
+            <p>Total en inventario</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inferior izquierdo: Productos recientes -->
+    <div class="dashboard-card products-card">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="card-title mb-0">Productos Recientes</h3>
+        <a [routerLink]="['/inventario']" class="btn btn-sm btn-link">
+          Ver todos
+        </a>
+      </div>
+
+      @if (isLoading) {
+        <div class="text-center my-3">
+          <div
+            class="spinner-border spinner-border-sm text-primary"
+            role="status"
+          >
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <p class="mt-1 small">Cargando productos...</p>
+        </div>
+      } @else if (error) {
+        <div class="alert alert-danger py-2">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          Error al cargar productos
+        </div>
+      } @else {
+        <div class="recent-products">
+          @if (recentProducts.length > 0) {
+            @for (product of recentProducts; track $index) {
+              <div class="product-item">
+                <div class="product-info">
+                  <span class="product-name">{{ product.item }}</span>
+                  <span class="product-type">{{ product.brand }}</span>
+                </div>
+                <span
+                  class="badge"
+                  [ngClass]="{
+                    'bg-danger': product.stock <= 2,
+                    'bg-warning': product.stock > 2 && product.stock <= 5,
+                    'bg-success': product.stock > 5,
+                  }"
+                >
+                  {{ product.stock }}
+                </span>
+              </div>
+            }
+          } @else {
+            <div class="text-center text-muted my-3">
+              <i class="fas fa-box-open me-2"></i>
+              No hay productos registrados
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Inferior derecho: Transacciones recientes (antes acciones rápidas) -->
+    <div class="dashboard-card transactions-card">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="card-title mb-0">Transacciones Recientes</h3>
+        <a [routerLink]="['/historial']" class="btn btn-sm btn-link">
+          Ver todas
+        </a>
+      </div>
+
+      @if (isLoading) {
+        <div class="text-center my-3">
+          <div
+            class="spinner-border spinner-border-sm text-primary"
+            role="status"
+          >
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <p class="mt-1 small">Cargando transacciones...</p>
+        </div>
+      } @else if (error) {
+        <div class="alert alert-danger py-2">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          Error al cargar transacciones
+        </div>
+      } @else {
+        <div class="recent-transactions">
+          @if (recentTransactions && recentTransactions.length > 0) {
+            @for (transaction of recentTransactions; track $index) {
+              <div class="transaction-item">
+                <div class="transaction-details">
+                  <span class="product-name">{{
+                    transaction.product?.item || "Producto"
+                  }}</span>
+                  <span class="transaction-time">{{
+                    transaction.created_at | date: "dd/MM/yyyy HH:mm"
+                  }}</span>
+                </div>
+                <div class="transaction-type">
+                  <span
+                    class="badge"
+                    [ngClass]="
+                      transaction.type === 'IN' ? 'bg-success' : 'bg-danger'
+                    "
+                  >
+                    <i
+                      class="fas"
+                      [ngClass]="
+                        transaction.type === 'IN'
+                          ? 'fa-arrow-down'
+                          : 'fa-arrow-up'
+                      "
+                    ></i>
+                    {{ transaction.quantity }}
+                  </span>
+                </div>
+              </div>
+            }
+          } @else {
+            <div class="text-center text-muted my-3">
+              <i class="fas fa-exchange-alt me-2"></i>
+              No hay transacciones recientes
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
 </div>

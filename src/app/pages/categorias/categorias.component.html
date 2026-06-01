@@ -1,0 +1,150 @@
+<div class="categorias-container">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Categorías</h2>
+            <p class="text-muted mb-0">Gestión de categorías del inventario</p>
+        </div>
+        @if (isAdmin()) {
+        <button class="btn btn-primary" (click)="openCreateForm()">
+            <i class="fas fa-plus me-2"></i>Nueva Categoría
+        </button>
+        }
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row mb-4">
+        <div class="stat-chip">
+            <i class="fas fa-tags"></i>
+            <span><strong>{{ categories.length }}</strong> categorías en total</span>
+        </div>
+    </div>
+
+    <div class="main-layout">
+
+        <!-- Tabla -->
+        <div class="table-panel">
+
+            @if (isLoading) {
+            <div class="text-center my-5">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-2 text-muted">Cargando categorías...</p>
+            </div>
+            } @else if (error) {
+            <div class="alert alert-danger m-3">
+                <i class="fas fa-exclamation-triangle me-2"></i>{{ errorMessage }}
+            </div>
+            } @else if (categories.length === 0) {
+            <div class="empty-state">
+                <i class="fas fa-tags fa-3x text-muted mb-3"></i>
+                <p class="text-muted">No hay categorías registradas</p>
+                @if (isAdmin()) {
+                <button class="btn btn-primary btn-sm" (click)="openCreateForm()">
+                    Crear primera categoría
+                </button>
+                }
+            </div>
+            } @else {
+
+            <!-- Desktop -->
+            <div class="desktop-view">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Nombre</th>
+                                @if (isAdmin()) { <th>Acciones</th> }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (cat of categories; track cat.id) {
+                            <tr>
+                                <td class="text-muted">{{ cat.id }}</td>
+                                <td><strong>{{ cat.name }}</strong></td>
+                                @if (isAdmin()) {
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-outline-primary" (click)="openEditForm(cat)">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(cat)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                                }
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Mobile -->
+            <div class="mobile-view">
+                <div class="categories-grid">
+                    @for (cat of categories; track cat.id) {
+                    <div class="category-card">
+                        <div class="category-card-header">
+                            <span class="category-name">{{ cat.name }}</span>
+                            @if (isAdmin()) {
+                            <div class="category-card-actions">
+                                <button class="btn btn-sm btn-outline-primary" (click)="openEditForm(cat)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(cat)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+
+            }
+        </div>
+
+        <!-- Formulario lateral -->
+        @if (showForm && isAdmin()) {
+        <div class="form-panel" id="category-form">
+            <div class="form-panel-header">
+                <h5 class="mb-0">
+                    <i class="fas me-2" [class.fa-plus-circle]="!isEditing" [class.fa-edit]="isEditing"></i>
+                    {{ isEditing ? 'Editar categoría' : 'Nueva categoría' }}
+                </h5>
+                <button class="btn btn-sm btn-outline-secondary" (click)="closeForm()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="form-panel-body">
+                <div class="mb-4">
+                    <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" formControlName="name" placeholder="Ej: Monitores, Audio..."
+                        [class.is-invalid]="categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched">
+                    @if (categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched) {
+                    <div class="invalid-feedback">
+                        @if (categoryForm.get('name')?.errors?.['required']) { El nombre es obligatorio }
+                        @if (categoryForm.get('name')?.errors?.['minlength']) { Mínimo 2 caracteres }
+                    </div>
+                    }
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-secondary flex-fill" (click)="closeForm()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary flex-fill" [disabled]="submitting">
+                        @if (submitting) { <span class="spinner-border spinner-border-sm me-1"></span> }
+                        {{ isEditing ? 'Guardar cambios' : 'Crear categoría' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+        }
+
+    </div>
+</div>

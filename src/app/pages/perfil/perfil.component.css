@@ -1,4 +1,31 @@
-/* Estilos generales para el contenedor de perfil */
+/* ============================================================
+   PERFIL COMPONENT
+   Versión: 2.0 — Layout vertical, gestión de usuarios admin
+   ============================================================ */
+
+/* ── Variables locales ── */
+:host {
+    --color-primary: #4a6cfa;
+    --color-success: #48bb78;
+    --color-danger: #e53e3e;
+    --color-warning: #fd7e14;
+    --color-text: #2d3748;
+    --color-muted: #718096;
+    --color-border: #e2e8f0;
+    --color-bg: #f8fafc;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 15px;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.10);
+    --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.14);
+    --transition-base: 0.25s ease;
+}
+
+/* ============================================================
+   CONTENEDOR Y LAYOUT
+   ============================================================ */
+
 .perfil-container {
     display: flex;
     flex-direction: column;
@@ -7,198 +34,340 @@
     padding: 25px 20px;
     overflow-y: auto;
     background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     box-sizing: border-box;
 }
 
-/* Estilos para la tarjeta de perfil */
-.profile-card {
-    max-width: 430px;
+.perfil-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
     width: 100%;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    max-width: 820px;
+}
+
+.profile-col,
+.users-col {
+    width: 100%;
+}
+
+/* ============================================================
+   TARJETA DE PERFIL
+   ============================================================ */
+
+.profile-card {
+    width: 100%;
     border: none;
-    margin-bottom: 25px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
     overflow: hidden;
+    transition: transform var(--transition-base),
+        box-shadow var(--transition-base);
 }
 
 .profile-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.18);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
 }
 
 .profile-card .card-body {
-    padding: 30px;
+    padding: 32px;
 }
 
-/* Estilos para el avatar */
 .profile-avatar {
-    color: #4a6cfa;
-    margin-bottom: 20px;
-    background: rgba(74, 108, 250, 0.1);
     width: 100px;
     height: 100px;
     border-radius: 50%;
+    background: rgba(74, 108, 250, 0.1);
+    color: var(--color-primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: auto;
-    margin-right: auto;
-    transition: all 0.3s ease;
+    margin: 0 auto 20px;
+    transition: transform var(--transition-base),
+        background var(--transition-base);
 }
 
 .profile-avatar:hover {
-    transform: scale(1.05);
-    background: rgba(74, 108, 250, 0.15);
+    transform: scale(1.06);
+    background: rgba(74, 108, 250, 0.16);
 }
 
-/* Tipografía mejorada */
 .card-title {
     font-size: 1.6rem;
     font-weight: 700;
-    color: #2d3748;
-    margin-bottom: 10px;
+    color: var(--color-text);
+    margin-bottom: 8px;
 }
 
-.card-text.text-muted {
-    font-size: 1rem;
-    color: #718096 !important;
+/* ============================================================
+   SECCIÓN USUARIOS (admin)
+   ============================================================ */
+
+.users-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
 }
 
-.badge {
-    padding: 8px 15px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    border-radius: 30px;
+.users-section-header h4 {
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
 }
 
-.bg-danger {
-    background-color: #e53e3e !important;
-}
-
-.bg-primary {
-    background-color: #4299e1 !important;
-}
-
-/* Botones con mejor estilo */
-.btn {
-    padding: 10px 20px;
-    font-weight: 600;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-    letter-spacing: 0.3px;
-}
-
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.btn-success {
-    background-color: #48bb78;
-    border-color: #48bb78;
-}
-
-.btn-danger {
-    background-color: #e53e3e;
-    border-color: #e53e3e;
-}
-
-.btn-primary {
-    background-color: #4a6cfa;
-    border-color: #4a6cfa;
-}
-
-.btn-outline-danger {
-    color: #e53e3e;
-    border-color: #e53e3e;
-}
-
-.btn i {
-    margin-right: 8px;
-}
-
-/* Estilos para el formulario de creación de usuario */
-.create-user-form {
-    max-height: 0;
+/* ── Tabla ── */
+.users-table-wrapper {
+    background: white;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
     overflow: hidden;
-    transition: max-height 0.5s ease, opacity 0.5s ease;
-    opacity: 0;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
+    box-shadow: var(--shadow-sm);
 }
 
-.create-user-form.show-form {
-    max-height: 1000px;
-    /* Aumentado para evitar problemas con formularios grandes */
-    opacity: 1;
+.users-table-wrapper .table {
+    margin-bottom: 0;
 }
 
-.create-user-form .card {
-    border-radius: 15px;
-    overflow: hidden;
-    padding: 10px;
-    border: none;
+.users-table-wrapper .table thead th {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--color-muted);
+    font-weight: 600;
+    padding: 12px 16px;
+    border-bottom: 2px solid var(--color-border);
+    background: #fafbfc;
 }
 
-.create-user-form .card-body {
-    padding: 25px;
+.users-table-wrapper .table tbody td {
+    padding: 10px 16px;
+    vertical-align: middle;
+    border-color: #f1f3f5;
 }
 
-/* Estilos para los campos del formulario */
+.users-table-wrapper .table tbody tr {
+    transition: background var(--transition-base);
+}
+
+/* Filas especiales */
+.row-inactive td {
+    opacity: 0.5;
+}
+
+.row-admin {
+    background-color: #fffaf9 !important;
+}
+
+.row-admin:hover {
+    background-color: #fff4f4 !important;
+}
+
+/* ── Indicador protegido ── */
+.protected-label {
+    font-size: 0.73rem;
+    color: #c8cdd3;
+    font-style: italic;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.protected-label i {
+    color: #d4d8dd;
+}
+
+/* ── Helpers de texto ── */
+.fw-500 {
+    font-weight: 500;
+}
+
+/* ============================================================
+   FORMULARIOS (crear / editar)
+   ============================================================ */
+
+.form-card {
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition-base);
+}
+
+.form-card:focus-within {
+    box-shadow: 0 4px 16px rgba(74, 108, 250, 0.10);
+    border-color: rgba(74, 108, 250, 0.30);
+}
+
+.form-card-title {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f1f3f5;
+}
+
 .form-label {
     font-weight: 600;
     color: #4a5568;
-    margin-bottom: 8px;
-    font-size: 0.95rem;
+    font-size: 0.88rem;
+    margin-bottom: 5px;
 }
 
 .form-control,
 .form-select {
-    border-radius: 8px;
-    padding: 10px 15px;
-    border: 1px solid #e2e8f0;
-    transition: all 0.3s ease;
-    background-color: #f8fafc;
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg);
+    font-size: 0.9rem;
+    transition: border-color var(--transition-base),
+        box-shadow var(--transition-base),
+        background var(--transition-base);
 }
 
 .form-control:focus,
 .form-select:focus {
-    border-color: #4a6cfa;
-    box-shadow: 0 0 0 3px rgba(74, 108, 250, 0.2);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(74, 108, 250, 0.14);
     background-color: #fff;
+    outline: none;
 }
 
 .form-control.is-invalid {
-    border-color: #e53e3e;
+    border-color: var(--color-danger);
     background-image: none;
 }
 
-.invalid-feedback {
-    font-size: 0.85rem;
-    margin-top: 5px;
+.form-control.is-invalid:focus {
+    box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.14);
 }
 
-/* Animación de carga */
+.invalid-feedback {
+    font-size: 0.80rem;
+    color: var(--color-danger);
+    margin-top: 3px;
+}
+
+/* ============================================================
+   BOTONES
+   ============================================================ */
+
+.btn {
+    padding: 10px 20px;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    transition: transform var(--transition-base),
+        box-shadow var(--transition-base),
+        opacity var(--transition-base);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.07);
+    letter-spacing: 0.2px;
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+}
+
+.btn:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* Tamaño extra-pequeño para acciones en tabla */
+.btn-xs {
+    padding: 3px 9px;
+    font-size: 0.74rem;
+    border-radius: 4px;
+    box-shadow: none;
+    font-weight: 500;
+}
+
+.btn-xs:hover:not(:disabled) {
+    transform: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10);
+}
+
+/* Colores */
+.btn-success {
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+    color: #fff;
+}
+
+.btn-danger {
+    background-color: var(--color-danger);
+    border-color: var(--color-danger);
+    color: #fff;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+}
+
+.btn-outline-danger {
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+}
+
+.btn-outline-danger:hover {
+    background-color: var(--color-danger);
+    color: #fff;
+}
+
+/* ============================================================
+   BADGES
+   ============================================================ */
+
+.badge {
+    padding: 5px 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+}
+
+/* ============================================================
+   SPINNER
+   ============================================================ */
+
 .spinner-border {
     width: 1.2rem;
     height: 1.2rem;
-    border-width: 0.15em;
+    border-width: 0.14em;
 }
 
-/* Ajuste para dispositivos móviles */
+/* ============================================================
+   RESPONSIVE — Tablet
+   ============================================================ */
+
+@media (max-width: 992px) {
+    .perfil-layout {
+        max-width: 100%;
+    }
+}
+
+/* ============================================================
+   RESPONSIVE — Mobile
+   ============================================================ */
+
 @media (max-width: 768px) {
+
     .perfil-container {
         padding: 15px 12px 85px;
     }
 
-    .profile-card {
-        max-width: 100%;
-        margin-bottom: 20px;
+    .profile-card .card-body {
+        padding: 22px 18px;
     }
 
     .profile-avatar {
@@ -207,20 +376,40 @@
     }
 
     .card-title {
-        font-size: 1.4rem;
-    }
-
-    .create-user-form .card {
-        margin: 0 5px;
-        border-radius: 12px;
+        font-size: 1.35rem;
     }
 
     .btn {
-        padding: 8px 16px;
+        padding: 8px 14px;
+        font-size: 0.88rem;
+    }
+
+    .users-table-wrapper .table thead th,
+    .users-table-wrapper .table tbody td {
+        padding: 8px 10px;
+        font-size: 0.82rem;
+    }
+
+    .form-card {
+        padding: 16px;
     }
 }
 
-/* Oscurecer un poco el fondo cuando el formulario está visible */
-.perfil-container.form-active {
-    background: linear-gradient(135deg, #e9ecf2 0%, #d8dde6 100%);
+/* ============================================================
+   RESPONSIVE — Móvil pequeño
+   ============================================================ */
+
+@media (max-width: 480px) {
+
+    .perfil-container {
+        padding: 12px 10px 90px;
+    }
+
+    .users-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .users-table-wrapper .table {
+        min-width: 520px;
+    }
 }

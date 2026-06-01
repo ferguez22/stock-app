@@ -1,32 +1,196 @@
-/* You can add global styles to this file, and also import other style files */
+/* ============================================================
+   STOCK-APP — GLOBAL DESIGN TOKENS
+   Edita aquí para cambiar el look completo de la app
+   ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Rowdies:wght@300;400;700&display=swap');
 
+/* ── Design Tokens ── */
+:root {
+
+    /* Colores de marca */
+    --color-primary: #4a6cfa;
+    --color-primary-hover: #3a5ce8;
+    --color-primary-light: rgba(74, 108, 250, 0.12);
+
+    --color-success: #48bb78;
+    --color-success-hover: #38a169;
+    --color-success-light: rgba(72, 187, 120, 0.12);
+
+    --color-danger: #e53e3e;
+    --color-danger-hover: #c53030;
+    --color-danger-light: rgba(229, 62, 62, 0.12);
+
+    --color-warning: #fd7e14;
+    --color-warning-light: rgba(253, 126, 20, 0.12);
+
+    --color-info: #0dcaf0;
+    --color-info-light: rgba(13, 202, 240, 0.12);
+
+    /* Neutrales */
+    --color-sidebar: #333b44;
+    --color-text: #2d3748;
+    --color-text-secondary: #4a5568;
+    --color-text-muted: #6c757d;
+    --color-text-light: #999;
+    --color-border: #e2e8f0;
+    --color-border-light: #f0f0f0;
+    --color-bg: #f5f7fa;
+    --color-bg-card: #ffffff;
+    --color-bg-input: #f8fafc;
+    --color-bg-body: rgb(186, 238, 255);
+
+    /* Espaciado — escala 4px */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 32px;
+    --space-8: 48px;
+
+    /* Border radius */
+    --radius-xs: 3px;
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-pill: 999px;
+
+    /* Sombras */
+    --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.07);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.10);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.12);
+    --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.20);
+
+    /* Tipografía */
+    --font-base: system-ui, -apple-system, sans-serif;
+    --font-brand: 'Rowdies', sans-serif;
+    --font-mono: 'Courier New', monospace;
+
+    --text-xs: 0.72rem;
+    --text-sm: 0.82rem;
+    --text-base: 0.92rem;
+    --text-md: 1.0rem;
+    --text-lg: 1.1rem;
+    --text-xl: 1.35rem;
+    --text-2xl: 1.6rem;
+    --text-3xl: 2.0rem;
+
+    /* Transiciones */
+    --transition-fast: 0.15s ease;
+    --transition-base: 0.25s ease;
+    --transition-slow: 0.40s ease;
+
+    /* Layout */
+    --sidebar-width: 200px;
+    --sidebar-width-collapsed: 80px;
+    --mobile-nav-height: 60px;
+    --page-padding: 20px;
+    --page-padding-mobile: 15px;
+
+    /* Z-index */
+    --z-base: 1;
+    --z-floating: 99;
+    --z-sidebar: 100;
+    --z-modal: 1050;
+}
+
+/* ── Bootstrap overrides — usa nuestros tokens ── */
+:root {
+    --bs-primary: var(--color-primary);
+    --bs-success: var(--color-success);
+    --bs-danger: var(--color-danger);
+    --bs-warning: var(--color-warning);
+    --bs-info: var(--color-info);
+    --bs-body-color: var(--color-text);
+    --bs-border-color: var(--color-border);
+    --bs-border-radius: var(--radius-md);
+    --bs-border-radius-sm: var(--radius-sm);
+    --bs-border-radius-lg: var(--radius-lg);
+    --bs-box-shadow: var(--shadow-sm);
+    --bs-box-shadow-lg: var(--shadow-lg);
+}
+
+/* ── Reset global ── */
 html,
 body {
     height: 100%;
     margin: 0;
     padding: 0;
     overflow: hidden;
-    /* Evita el scroll en el body */
-    background-color: rgb(186, 238, 255);
+    background-color: var(--color-bg-body);
+    font-family: var(--font-base);
+    color: var(--color-text);
 }
 
-/* Clases para la fuente Rowdies */
+/* ── Tipografía de marca ── */
 .rowdies-light {
-    font-family: "Rowdies", sans-serif;
+    font-family: var(--font-brand);
     font-weight: 300;
-    font-style: normal;
 }
 
 .rowdies-regular {
-    font-family: "Rowdies", sans-serif;
+    font-family: var(--font-brand);
     font-weight: 400;
-    font-style: normal;
 }
 
 .rowdies-bold {
-    font-family: "Rowdies", sans-serif;
+    font-family: var(--font-brand);
     font-weight: 700;
-    font-style: normal;
+}
+
+/* ── Utilidades globales ── */
+.text-muted {
+    color: var(--color-text-muted) !important;
+}
+
+.font-mono {
+    font-family: var(--font-mono);
+}
+
+/* Código inline */
+.code-badge {
+    font-family: var(--font-mono);
+    background-color: var(--color-bg-input);
+    color: var(--color-text-secondary);
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+}
+
+/* Desktop / mobile toggle — patrón común en toda la app */
+.desktop-view {
+    display: block;
+}
+
+.mobile-view {
+    display: none;
+}
+
+@media (max-width: 992px) {
+    .desktop-view {
+        display: none;
+    }
+
+    .mobile-view {
+        display: block;
+    }
+}
+
+/* Scrollbar global (webkit) */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #cbd5e0;
+    border-radius: var(--radius-pill);
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
 }

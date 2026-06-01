@@ -42,7 +42,8 @@ export class HomeComponent implements OnInit {
     private router: Router
   ) {}
   
-@HostListener('window:resize', ['$event'])
+@HostListener('window:resize')
+
 onResize() {
     this.checkScreenSize();
 }
@@ -59,7 +60,7 @@ onResize() {
 
   loadUserData(): void {
     const cachedUser = this.tokenService.getUser();
-    if (cachedUser) {
+    if (cachedUser?.name) {
       this.currentUser = cachedUser;
     } else {
       const userId = this.authService.getCurrentUserId();
@@ -95,8 +96,8 @@ onResize() {
         // Obtener productos recientes
         this.recentProducts = [...products]
           .sort((a, b) => {
-            return new Date(b.updatedAt || b.createdAt || 0).getTime() - 
-                   new Date(a.updatedAt || a.createdAt || 0).getTime();
+            return new Date(b.updated_at || b.created_at || 0).getTime() - 
+                   new Date(a.updated_at || a.created_at || 0).getTime();
           })
           .slice(0, 5);
         
@@ -106,8 +107,8 @@ onResize() {
         // Obtener transacciones recientes
         this.recentTransactions = [...transactions]
           .sort((a, b) => {
-            return new Date(b.createdAt || 0).getTime() - 
-                   new Date(a.createdAt || 0).getTime();
+            return new Date(b.created_at || 0).getTime() - 
+                   new Date(a.created_at || 0).getTime();
           })
           .slice(0, 5);
       },

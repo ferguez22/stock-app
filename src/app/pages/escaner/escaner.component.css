@@ -1,57 +1,52 @@
-.escaner-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    padding: 20px;
-    overflow-y: auto; /* This already allows vertical scrolling */
-    background-color: #f5f7fa;
-    border-radius: 8px;
-    box-sizing: border-box;
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-}
-
-/* Ensure the container takes full height */
 :host {
     display: block;
     height: 100%;
     overflow: hidden;
 }
 
-/* Enhanced scrolling for product lists */
+.escaner-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: var(--page-padding);
+    overflow-y: auto;
+    background-color: var(--color-bg);
+    border-radius: var(--radius-md);
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+}
+
 .out-products-list {
     max-height: 300px;
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin; /* For Firefox */
+    scrollbar-width: thin;
     padding-right: 3px;
     margin-right: -3px;
-    position: relative;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: var(--space-1);
 }
 
-/* Scrollbar styling for webkit browsers */
 .out-products-list::-webkit-scrollbar {
     width: 6px;
 }
 
 .out-products-list::-webkit-scrollbar-thumb {
-    background-color: #adb5bd;
-    border-radius: 3px;
+    background-color: #cbd5e0;
+    border-radius: var(--radius-pill);
 }
 
 .out-products-list::-webkit-scrollbar-track {
-    background-color: #f8f9fa;
+    background-color: var(--color-bg-input);
 }
 
-/* Mobile adjustments to ensure scrolling works properly */
 @media (max-width: 768px) {
     .escaner-container {
-        padding: 15px;
-        padding-bottom: 80px;
-        height: calc(100vh - 80px); /* Use viewport height to ensure fullness */
+        padding: var(--page-padding-mobile);
+        padding-bottom: calc(var(--mobile-nav-height) + var(--page-padding-mobile));
+        height: calc(100vh - var(--mobile-nav-height));
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
     }

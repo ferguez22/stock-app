@@ -1,36 +1,20 @@
 <div class="escaner-container">
-    <!-- Encabezado -->
+
     <div class="header mb-4">
         <h2>Escáner de Productos</h2>
-        <p class="text-muted">Escanea códigos de barras para registrar movimientos de inventario</p>
+        <p class="text-muted">Escanea el QR para registrar movimientos de inventario</p>
     </div>
 
-    <!-- Área del escáner -->
+    <!-- Área de escáner -->
     <div class="scanner-area card mb-4">
         <div class="card-body">
-            <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fas fa-barcode"></i></span>
-                <input #barcodeInput type="text" class="form-control"
-                    placeholder="Escanea un código o escríbelo manualmente" [(ngModel)]="scannedCode"
-                    (keydown.enter)="processBarcode()" autofocus>
-                <button class="btn btn-primary" (click)="processBarcode()">
-                    <i class="fas fa-search me-2"></i>Buscar
-                </button>
-            </div>
 
-            <!-- Agregar el mensaje de error aquí -->
-            @if (error) {
-            <div class="alert alert-danger mt-2 mb-3">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                {{ errorMessage }}
-            </div>  
-            }
-
+            <!-- Toggle modo -->
             <div class="scanner-mode-toggle text-center mb-3">
                 <div class="btn-group" role="group">
                     <button class="btn" [class.btn-primary]="scannerMode === 'usb'"
                         [class.btn-outline-primary]="scannerMode !== 'usb'" (click)="setScannerMode('usb')">
-                        <i class="fas fa-keyboard me-2"></i>Escáner USB
+                        <i class="fas fa-keyboard me-2"></i>Manual / USB
                     </button>
                     <button class="btn" [class.btn-primary]="scannerMode === 'camera'"
                         [class.btn-outline-primary]="scannerMode !== 'camera'" (click)="setScannerMode('camera')">
@@ -39,43 +23,75 @@
                 </div>
             </div>
 
-            <!-- Componente de cámara (se muestra solo cuando está en modo cámara) -->
-            <div [hidden]="scannerMode !== 'camera'" class="camera-scanner">
-                <!-- Aquí irá el componente de escáner con cámara -->
+            <!-- Modo USB / manual -->
+            @if (scannerMode === 'usb') {
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-qrcode"></i></span>
+                <input #barcodeInput type="text" class="form-control" placeholder="Escanea el QR o escribe el código"
+                    [(ngModel)]="scannedCode" (keydown.enter)="processBarcode()" autofocus>
+                <button class="btn btn-primary" (click)="processBarcode()" [disabled]="isLoading">
+                    @if (isLoading) {
+                    <span class="spinner-border spinner-border-sm me-1"></span>
+                    } @else {
+                    <i class="fas fa-search me-1"></i>
+                    }
+                    Buscar
+                </button>
             </div>
+            }
+
+            <!-- Modo cámara ZXing -->
+            @if (scannerMode === 'camera') {
+            @if (cameraPermissionDenied) {
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Sin acceso a la cámara. Comprueba los permisos del navegador.
+            </div>
+            }
+            <zxing-scanner [enable]="scannerEnabled" (scanSuccess)="onZxingScan($event)"
+                (camerasFound)="onCamerasFound($event)" (permissionResponse)="onPermissionResponse($event)">
+            </zxing-scanner>
+            @if (isLoading) {
+            <div class="text-center mt-2">
+                <div class="spinner-border spinner-border-sm text-primary"></div>
+                <span class="ms-2 text-muted">Buscando producto...</span>
+            </div>
+            }
+            }
+
+            <!-- Error -->
+            @if (error) {
+            <div class="alert alert-danger mt-3 mb-0">
+                <i class="fas fa-exclamation-triangle me-2"></i>{{ errorMessage }}
+            </div>
+            }
+
         </div>
     </div>
 
-    <!-- Productos del usuario actual -->
+    <!-- Mis productos fuera -->
     <div class="card mb-4">
         <div class="card-header">
             <h4 class="m-0">Tus productos fuera de almacén</h4>
         </div>
         <div class="card-body">
-            <!-- Estado de carga -->
             @if (isLoadingOutProducts) {
             <div class="text-center">
-                <div class="spinner-border text-primary spinner-border-sm" role="status">
-                    <span class="visually-hidden">Cargando...</span>
-                </div>
-                <p class="text-muted mt-2">Cargando productos...</p>
+                <div class="spinner-border text-primary spinner-border-sm"></div>
+                <p class="text-muted mt-2">Cargando...</p>
             </div>
             } @else if (outProductsError) {
-            <div class="alert alert-danger">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                Error al cargar productos
-            </div>
+            <div class="alert alert-danger mb-0">Error al cargar productos</div>
             } @else if (myOutProducts.length === 0) {
-            <p class="text-muted text-center">No tienes productos fuera de almacén</p>
+            <p class="text-muted text-center mb-0">No tienes productos fuera de almacén</p>
             } @else {
             <div class="out-products-list">
                 @for (item of myOutProducts; track $index) {
-                <div class="out-product-item d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
+                <div class="out-product-item d-flex justify-content-between align-items-center p-2 border-bottom">
                     <div class="product-info">
-                        <div class="product-name">{{ item.product.item }}</div>
-                        <div class="d-flex align-items-center">
-                            <small class="text-muted me-2">{{ item.product.code }}</small>
-                            <!-- Mostrar la fecha de salida -->
+                        <div class="fw-semibold">{{ item.product?.item }}</div>
+                        <div class="d-flex align-items-center gap-2">
+                            <small class="text-muted">{{ item.product?.code }}</small>
                             @if (item.lastExitDate) {
                             <small class="text-secondary">
                                 <i class="fas fa-clock me-1"></i>{{ item.lastExitDate | date:'dd/MM/yy HH:mm' }}
@@ -83,61 +99,55 @@
                             }
                         </div>
                     </div>
-                    <div class="quantity-badge">
-                        <span class="badge bg-primary">{{ item.quantityOut }}</span>
-                    </div>
-                </div>               }
-            </div>
-            }
-        </div>
-    </div>
-
-    <!-- Productos de otros usuarios -->
-    <div class="card">
-        <div class="card-header">
-            <h4 class="m-0">Productos fuera de almacén (otros usuarios)</h4>
-        </div>
-        <div class="card-body">
-            <!-- Estado de carga -->
-            @if (isLoadingOthersProducts) {
-            <div class="text-center">
-                <div class="spinner-border text-primary spinner-border-sm" role="status">
-                    <span class="visually-hidden">Cargando...</span>
-                </div>
-                <p class="text-muted mt-2">Cargando productos...</p>
-            </div>
-            } @else if (othersProductsError) {
-            <div class="alert alert-danger">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                Error al cargar productos
-            </div>
-            } @else if (othersOutProducts.length === 0) {
-            <p class="text-muted text-center">No hay productos fuera de almacén de otros usuarios</p>
-            } @else {
-            <div class="out-products-list">
-                @for (item of othersOutProducts; track $index) {
-                <div class="out-product-item d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
-                    <div class="product-info">
-                        <div class="product-name">{{ item.product.item }}</div>
-                        <div class="d-flex align-items-center">
-                            <small class="text-muted me-2">{{ item.product.code }}</small>
-                            <small class="text-info me-2">
-                                <i class="fas fa-user me-1"></i>{{ item.user.name }}
-                            </small>
-                            @if (item.lastExitDate) {
-                            <small class="text-secondary">
-                                <i class="fas fa-clock me-1"></i>{{ item.lastExitDate | date:'dd/MM/yy HH:mm' }}
-                            </small>
-                            }
-                        </div>
-                    </div>
-                    <div class="quantity-badge">
-                        <span class="badge bg-primary">{{ item.quantityOut }}</span>
-                    </div>
+                    <span class="badge bg-warning text-dark">{{ item.quantityOut }} ud.</span>
                 </div>
                 }
             </div>
             }
         </div>
     </div>
+
+    <!-- Otros usuarios fuera -->
+     @if (userRole === 'admin') {
+    <div class="card">
+        <div class="card-header">
+            <h4 class="m-0">Fuera de almacén — otros usuarios</h4>
+        </div>
+        <div class="card-body">
+            @if (isLoadingOthersProducts) {
+            <div class="text-center">
+                <div class="spinner-border text-primary spinner-border-sm"></div>
+                <p class="text-muted mt-2">Cargando...</p>
+            </div>
+            } @else if (othersProductsError) {
+            <div class="alert alert-danger mb-0">Error al cargar productos</div>
+            } @else if (othersOutProducts.length === 0) {
+            <p class="text-muted text-center mb-0">No hay productos fuera de otros usuarios</p>
+            } @else {
+            <div class="out-products-list">
+                @for (item of othersOutProducts; track $index) {
+                <div class="out-product-item d-flex justify-content-between align-items-center p-2 border-bottom">
+                    <div class="product-info">
+                        <div class="fw-semibold">{{ item.product?.item }}</div>
+                        <div class="d-flex align-items-center gap-2">
+                            <small class="text-muted">{{ item.product?.code }}</small>
+                            <small class="text-info">
+                                <i class="fas fa-user me-1"></i>{{ item.user?.name }}
+                            </small>
+                            @if (item.lastExitDate) {
+                            <small class="text-secondary">
+                                <i class="fas fa-clock me-1"></i>{{ item.lastExitDate | date:'dd/MM/yy HH:mm' }}
+                            </small>
+                            }
+                        </div>
+                    </div>
+                    <span class="badge bg-primary">{{ item.quantityOut }} ud.</span>
+                </div>
+                }
+            </div>
+            }
+        </div>
+    </div>
+        }
+
 </div>
