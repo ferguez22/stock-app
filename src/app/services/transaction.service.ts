@@ -18,7 +18,6 @@ export class TransactionService {
 
   getAll(): Observable<ITransaction[]> {
   return this.http.get<IApiResponse<ITransaction[]>>(this.apiUrl).pipe(
-    tap(response => console.log('Respuesta de API:', response)),
     map(response => {
       if (!response.success || !response.data) return [];
       return response.data;

@@ -50,17 +50,14 @@ export class HistorialTransaccionesComponent implements OnInit {
       .pipe(
         finalize(() => {
           this.isLoading = false;
-          console.log('Transacciones cargadas:', this.transactions.length);
         })
       )
       .subscribe({
         next: (data) => {
-          console.log('Datos recibidos:', data);
           this.transactions = data;
           this.applyFilters();
         },
         error: (err) => {
-          console.error('Error al cargar transacciones:', err);
           this.error = true;
           this.errorMessage = 'No se pudieron cargar las transacciones. Por favor, inténtalo de nuevo más tarde.';
         }
@@ -102,6 +99,5 @@ export class HistorialTransaccionesComponent implements OnInit {
     }
     
     this.filteredTransactions = filtered;
-    console.log('Transacciones filtradas:', this.filteredTransactions.length);
   }
 }
