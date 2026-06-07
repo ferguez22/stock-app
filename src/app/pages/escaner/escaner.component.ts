@@ -185,68 +185,91 @@ export class EscanerComponent implements OnInit, AfterViewInit {
   }
 
   updateProductStock(product: IProduct, type: 'IN' | 'OUT', outQuantity?: number): void {
-
-      if (type === 'IN' && outQuantity === 1) {
-        Swal.fire({
-          title: 'Devolver producto',
-          html: `¿Devolver <strong>1 unidad</strong> de "${product.item}" al almacén?`,
-          icon: 'question',
-          showCancelButton: true,
-          confirmButtonText: 'Devolver',
-          cancelButtonText: 'Cancelar',
-          confirmButtonColor: '#28a745'
-        }).then(result => {
-          if (!result.isConfirmed) {
-            this.scannedCode = '';
-            this.focusInput();
-            if (this.scannerMode === 'camera') this.scannerEnabled = true;
-            return;
-          }
-          this.executeTransaction(product, type, 1);
-        });
-        return;
-      }
-
-      const infoText = type === 'IN' && outQuantity ? `Tienes ${outQuantity} ud. fuera. ` : '';
-
+    if (type === 'IN' && outQuantity === 1) {
       Swal.fire({
-        title: type === 'IN' ? 'Entrada de producto' : 'Salida de producto',
-        text: `${infoText}¿Cuántas unidades de "${product.item}" quieres ${type === 'IN' ? 'ingresar al' : 'retirar del'} almacén?`,
-        input: 'number',
-        inputAttributes: {
-          min: '1',
-          step: '1',
-          ...(type === 'IN' && outQuantity ? { max: String(outQuantity) } : {})
-        },
+        title: 'Devolver producto',
+        html: `¿Devolver <strong>1 unidad</strong> de "${product.item}" al almacén?`,
+        icon: 'question',
         showCancelButton: true,
-        confirmButtonText: 'Confirmar',
+        confirmButtonText: 'Devolver',
         cancelButtonText: 'Cancelar',
-        inputValidator: (value) => {
-          if (!value || parseInt(value) <= 0) return 'Cantidad inválida';
-          if (type === 'IN' && outQuantity && parseInt(value) > outQuantity)
-            return `Máximo ${outQuantity} unidades (las que tienes fuera)`;
-          return null;
-        }
+        confirmButtonColor: '#28a745'
       }).then(result => {
-        if (!result.isConfirmed) {
-          this.scannedCode = '';
-          this.focusInput();
-          if (this.scannerMode === 'camera') this.scannerEnabled = true;
-          return;
-        }
-
-        const quantity = parseInt(result.value);
-
-        if (type === 'OUT' && quantity > product.stock) {
-          Swal.fire({ icon: 'error', title: 'Stock insuficiente', text: `Solo hay ${product.stock} unidades disponibles` });
-          return;
-        }
-
-        this.executeTransaction(product, type, quantity);
+        if (!result.isConfirmed) { this.resetScanner(); return; }
+        this.executeTransaction(product, type, 1);
       });
+      return;
     }
 
-    private executeTransaction(product: IProduct, type: 'IN' | 'OUT', quantity: number): void {
+    const maxQty = type === 'IN' ? (outQuantity ?? 0) : product.stock;
+    const infoHtml = type === 'IN'
+      ? `Tienes <strong>${maxQty}</strong> ud. fuera`
+      : `Stock disponible: <strong>${maxQty}</strong>`;
+
+    this.showQuantityDialog(type, maxQty, infoHtml).then(qty => {
+      if (qty === null) { this.resetScanner(); return; }
+      this.executeTransaction(product, type, qty);
+    });
+  }
+
+  private showQuantityDialog(type: 'IN' | 'OUT', maxQty: number, infoHtml: string): Promise<number | null> {
+    const limit = Math.min(5, maxQty);
+    const buttonsHtml = Array.from({ length: limit }, (_, i) => i + 1)
+      .map(n => `<button class="btn btn-outline-primary qty-btn m-1 px-3 py-2" style="font-size:1.1rem;min-width:52px" data-qty="${n}">${n}</button>`)
+      .join('');
+
+    const otherBtnHtml = maxQty > 5
+      ? `<br><button class="btn btn-outline-secondary btn-sm mt-2" id="btn-other">Otra cantidad</button>`
+      : '';
+
+    return new Promise(resolve => {
+      Swal.fire({
+        title: type === 'IN' ? 'Entrada de producto' : 'Salida de producto',
+        html: `
+          <p class="text-muted mb-3">${infoHtml}</p>
+          <div>${buttonsHtml}</div>
+          ${otherBtnHtml}
+          <div id="other-container" style="display:none;margin-top:12px">
+            <input type="number" id="other-input" class="swal2-input" min="1" max="${maxQty}" placeholder="Máx. ${maxQty}">
+            <button class="btn btn-primary mt-2" id="confirm-other">Confirmar</button>
+          </div>
+        `,
+        showConfirmButton: false,
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar',
+        didOpen: () => {
+          document.querySelectorAll('.qty-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const qty = parseInt((btn as HTMLElement).getAttribute('data-qty') || '0');
+              Swal.close();
+              resolve(qty);
+            });
+          });
+          document.getElementById('btn-other')?.addEventListener('click', () => {
+            document.getElementById('other-container')!.style.display = 'block';
+            document.getElementById('btn-other')!.style.display = 'none';
+          });
+          document.getElementById('confirm-other')?.addEventListener('click', () => {
+            const input = document.getElementById('other-input') as HTMLInputElement;
+            const val = parseInt(input.value);
+            if (!val || val < 1 || val > maxQty) { input.style.borderColor = 'red'; return; }
+            Swal.close();
+            resolve(val);
+          });
+        }
+      }).then(result => {
+        if (result.isDismissed) resolve(null);
+      });
+    });
+  }
+
+  private resetScanner(): void {
+    this.scannedCode = '';
+    this.focusInput();
+    if (this.scannerMode === 'camera') this.scannerEnabled = true;
+  }
+
+  private executeTransaction(product: IProduct, type: 'IN' | 'OUT', quantity: number): void {
       Swal.fire({ title: 'Procesando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
       this.transactionService.create({ product_id: product.id!, type, quantity }).subscribe({
